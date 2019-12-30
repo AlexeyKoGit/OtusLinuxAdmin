@@ -99,13 +99,7 @@ $ sudo cp /boot/config* .config
 Понадобиться установить :
     
 ```bash
-$ sudo yum install gcc
-$ sudo yum install flex
-$ sudo yum install bison
-
-$ sudo yum install openssl-devel
-$ sudo yum install elfutils-libelf-devel
-$ sudo yum install bc
+$ sudo yum install -y ncurses-devel make gcc bc bison flex elfutils-libelf-devel openssl-devel
 ```
 </details>
 
