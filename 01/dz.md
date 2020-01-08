@@ -108,7 +108,7 @@ $ sudo make oldconfig
 ```
 Собираем ядро, N - число потоков
 ```bash
-$ sudo root make -jN
+$ sudo make -jN
 ```
 Устанавливаем модули в **/boot/**
 ```bash
