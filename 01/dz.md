@@ -81,12 +81,12 @@ $ sudo yum install wget
 </details>
 
 ```bash
-$ sudo wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.4.10.tar.xz
+$ sudo wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.4.2.tar.xz  
 ```
 Распаковываем архив с исходниками ядра
 
 ```bash
-$ sudo tar -xvf ./linux-5.4.10.tar.xz -C /usr/src/kernels
+$ sudo tar -xvf ./linux-5.4.2.tar.xz   -C /usr/src/kernels
 ```
 #### 6. Собираем ядро
 Копируем текущую конфигурацию ядра
