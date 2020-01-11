@@ -136,12 +136,7 @@ $ uname -r
 ```
 Видим, что box запустился с новым ядром (5.4.2)
 #### 6. Настраиваем VirtualBox Shared Folders
-```bash
-URLs
-<https://superuser.com/questions/1421004/virtualbox-guest-additions-for-linux-guest-with-kernel-5-0-5>
-```
 Для настройки общей директории между гостевой и хост системой нужно на гостевой ОС установить VirtualBox дополнения.
-
 ```bash
 $ sudo wget -c https://download.virtualbox.org/virtualbox/6.1.0/VBoxGuestAdditions_6.0.10.iso  -O /opt/VBoxGuestAdditions_6.0.10.iso
 $ sudo mount -o loop /opt/VBoxGuestAdditions_6.1.0.iso /mnt
