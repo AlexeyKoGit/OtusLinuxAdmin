@@ -143,15 +143,47 @@ URLs
 Для настройки общей директории между гостевой и хост системой нужно на гостевой ОС установить VirtualBox дополнения.
 
 ```bash
-$ sudo wget -c https://download.virtualbox.org/virtualbox/6.0.10/VBoxGuestAdditions_6.0.10.iso  -O /opt/VBoxGuestAdditions_6.0.10.iso
-$ sudo mount -o loop /opt/VBoxGuestAdditions_6.0.10.iso /mnt/
+$ sudo wget -c https://download.virtualbox.org/virtualbox/6.1.0/VBoxGuestAdditions_6.0.10.iso  -O /opt/VBoxGuestAdditions_6.0.10.iso
+$ sudo mount -o loop /opt/VBoxGuestAdditions_6.1.0.iso /mnt
 ```
+Для сборки гостевых модулей, понадобятся заголовки ядра, для использования новых kernel-headers необходимо установить симлинк 
+```bash
+$ sudo ln -s /usr/src/kernels/linux-5.4.2 /usr/src/linux
+```
+Запускаем сборку гостевых модулей
+```bash
+$ cd/mnt/
+$ sudo ./VBoxLinuxAdditions.run
+```
+После сборки, правим строчку в vafrantfile, разрешаем использование общей директории
+```bash
+config.vm.synced_folder ".", "/vagrant", disabled: false, type: "virtualbox"
+```
+Выходим из Box-а, и перезапускаем его
 
+```bash
+$ exit
+$ vagrant reload
+```
+Дожидаемся перезапуска **Box-а**, проверяем работу общей директории, по умолчанию это коневая директория, где находиться **vagrantfile** на **host PC** и **/vagrant/** на **guest PC**.
 
-
-## Ошибки
-#### Для проверяющих, данный раздел прошу не брать во внимания, это шпаргалка для меня по возникшим трудностям.
-### Включение вложенной виртуализации
-### Добавление ключей для github
-
-<https://www.cyberciti.biz/tips/compiling-linux-kernel-26.html>
+Для теста перейдем на **guest PC**, в директорию **/vagrant/** и создадим цепочку каталогов
+```bash
+$ cd /vagrant
+$ mkdir -p ./test_k5/yes
+```
+Проверяем на host машине что данные каталоги появились.
+#### 6. Загружаем box в Vagrant Cloud
+```bash
+$ vagrant package --output centos-7.7.1908-kernel-5-x86_64-Minimal.box
+```
+Загружаем в облако **box**, делаем релиз его версии и правим исходный **vagrantfile**
+```bash
+***
+:box_name => "AlexeyKo/centos-7-5",
+***
+config.vm.synced_folder ".", "/vagrant", disabled: false, type: "virtualbox"
+***
+```
+#### Результат
+Используя полученный **vagrantfile** можно развернуть полученный box командой **vagrant up**, будет скачен образ из облака, распакован и поднят box со всеми внесенными изменениями.
