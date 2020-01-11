@@ -135,7 +135,7 @@ $ vagrant ssh
 $ uname -r
 ```
 Видим, что box запустился с новым ядром (5.4.2)
-#### 6. Настраиваем VirtualBox Shared Folders
+#### 7. Настраиваем VirtualBox Shared Folders
 Для настройки общей директории между гостевой и хост системой нужно на гостевой ОС установить VirtualBox дополнения.
 ```bash
 $ sudo wget -c https://download.virtualbox.org/virtualbox/6.1.0/VBoxGuestAdditions_6.0.10.iso  -O /opt/VBoxGuestAdditions_6.0.10.iso
@@ -168,7 +168,7 @@ $ cd /vagrant
 $ mkdir -p ./test_k5/yes
 ```
 Проверяем на host машине что данные каталоги появились.
-#### 6. Загружаем box в Vagrant Cloud
+#### 8. Загружаем box в Vagrant Cloud
 ```bash
 $ vagrant package --output centos-7.7.1908-kernel-5-x86_64-Minimal.box
 ```
