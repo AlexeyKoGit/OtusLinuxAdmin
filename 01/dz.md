@@ -104,7 +104,7 @@ $ sudo yum install -y ncurses-devel make gcc bc bison flex elfutils-libelf-devel
 </details>
 
 ```bash
-$ sudo make oldconfig 
+$ sudo make olddefconfig 
 ```
 Собираем ядро, N - число потоков
 ```bash
