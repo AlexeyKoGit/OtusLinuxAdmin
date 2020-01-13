@@ -25,7 +25,7 @@
 - **Методичка_Дисковая подсистема RAID_Linux.pdf**
 
 URLs:  
-<https://github.com/erlong15/otus-linux>
+- <https://github.com/erlong15/otus-linux>
  
 ## Порядок выполнения задания
 #### 1. Устанавливаем необходимое ПО
