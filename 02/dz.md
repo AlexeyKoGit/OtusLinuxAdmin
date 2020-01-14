@@ -25,7 +25,7 @@
 - **Методичка_Дисковая подсистема RAID_Linux.pdf**
 
 URLs:  
-- <https://github.com/erlong15/otus-linux>
+<https://github.com/erlong15/otus-linux>
  
 ## Порядок выполнения задания
 #### 1. Устанавливаем необходимое ПО
@@ -33,6 +33,27 @@ URLs:
 * **VirtualBox**
 * **Vagrant**
 #### 2. Конфигурируем vagrantfile
-Согласно методичке **"Методичка_Дисковая подсистема RAID_Linux.pdf"**, сконфигурируем **vagrantfile** на основе примера из <https://github.com/erlong15/otus-linux>
-
-
+Согласно методичке **"Методичка_Дисковая подсистема RAID_Linux.pdf"**, сконфигурируем **vagrantfile** на основе примера из <https://github.com/erlong15/otus-linux>  
+Для того чтобы изменить директорию расположения файлов дисков (.vdi) пропишем переменную
+```ruby
+#***
+home = ENV['HOME'] 
+#***
+```
+Для добавления новых дисков в необходимом количестве пропишем в  **Vagrantfile** конфигурацию следующего типа:
+```ruby
+#***
+      # disks
+      :disks => {
+        :sata1 => {
+          :dfile => home + '/VirtualBox VMs/sata1.vdi',
+          :size => 250,
+          :port => 1
+          },
+        :sata2 => {
+          :dfile => home + '/VirtualBox VMs/sata2.vdi',
+          :size => 250, # Megabytes
+          :port => 2
+          },
+#***
+```
