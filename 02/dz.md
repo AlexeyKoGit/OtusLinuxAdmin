@@ -70,7 +70,7 @@ home = ENV['HOME']
 Полученной конфигурации достаточно для выполнения задания:  
 - собрать R0/R5/R10 на выбор  
 - сломать/починить raid  
-#### 2. Создаем RAID
+#### 3. Создаем RAID
 После того как сконфигурировали **Vagrantfile** с дополнительными **4-мя дисками**, поднимет **box** и заходим на него и проверяем диски командой **lsblk**.
 ```bash
 $ lsblk
@@ -119,7 +119,7 @@ unused devices: <none>
 ```
 Подробо
 ```bash
-$ $ sudo mdadm -D /dev/md0
+$ sudo mdadm -D /dev/md0
 
 /dev/md0:
            Version : 1.2
@@ -154,5 +154,151 @@ Consistency Policy : resync
        3       8       64        3      active sync set-B   /dev/sde
 
 ```
-#### 3. Ломаем/Чиним RAID
-div.warnbox { background-color:#fcc; border-left: 3px solid #f00; } ~~~~~~ <div class="warnbox"> If you pass null as a parameter the world will end. </div>
+#### 4. Ломаем/Чиним RAID
+Для динамического отслеживания изменений, используем команду
+```bash
+$ watch cat /proc/mdstat
+```
+Используя мультиплексор сессий такой как tmux или подключившись параллельно по ssh выполним команду
+```bash
+$ sudo mdadm /dev/md0 --fail /dev/sdd
+
+mdadm: set /dev/sdd faulty in /dev/md0
+```
+Этим мы вызовем искусственный отказ диска.  
+Смотрим какие изменения произойдут в запущенной команде **watch cat**
+```bash
+$ watch cat /proc/mdstat
+
+Personalities : [raid10]
+md0 : active raid10 sdd[4](F) sde[3] sdc[1] sdb[0]
+      507904 blocks super 1.2 512K chunks 2 near-copies [4/3] [UU_U]
+
+unused devices: <none>
+```
+Видим, что:  
+- диск **sdd** получил флаг **F**.
+- **3** диска из **4**-х работают.
+- на месте **U**-unit, теперь прочерк **_**  
+
+Посмотрим подробную информацию
+```bash
+$ sudo mdadm -D /dev/md0
+
+/dev/md0:
+           Version : 1.2
+     Creation Time : Tue Jan 14 22:38:52 2020
+        Raid Level : raid10
+        Array Size : 507904 (496.00 MiB 520.09 MB)
+     Used Dev Size : 253952 (248.00 MiB 260.05 MB)
+      Raid Devices : 4
+     Total Devices : 4
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jan 15 01:06:15 2020
+             State : clean, degraded
+    Active Devices : 3
+   Working Devices : 3
+    Failed Devices : 1
+     Spare Devices : 0
+
+            Layout : near=2
+        Chunk Size : 512K
+
+Consistency Policy : resync
+
+              Name : auto-raid-10:0  (local to host auto-raid-10)
+              UUID : 7e0c179d:abdd902b:24b2b3a3:48feb093
+            Events : 41
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync set-A   /dev/sdb
+       1       8       32        1      active sync set-B   /dev/sdc
+       -       0        0        2      removed
+       3       8       64        3      active sync set-B   /dev/sde
+
+       4       8       48        -      faulty   /dev/sdd
+
+```
+
+Здесь также видим что диск **sdd** отсутствует в **RAID**-е помечен как **removed** и что он неисправен **faulty**  
+Извлекаем данный диск **sdd** из **RAID** массива
+```bash
+$ sudo mdadm /dev/md0 --remove /dev/sdd
+
+mdadm: hot removed /dev/sdd from /dev/md0
+```
+Снова смотрим какие изменения произойдут в запущенной команде **watch cat**
+```bash
+$ watch cat /proc/mdstat                                                                                      
+
+Personalities : [raid10]
+md0 : active raid10 sde[3] sdc[1] sdb[0]
+      507904 blocks super 1.2 512K chunks 2 near-copies [4/3] [UU_U]
+
+unused devices: <none>
+```
+Видим, что диск **sdd** отсутствует  
+При выводе подробной информации диск sdd также отсутствует
+```bash
+$ sudo mdadm -D /dev/md0
+/dev/md0:
+           Version : 1.2
+     Creation Time : Tue Jan 14 22:38:52 2020
+        Raid Level : raid10
+        Array Size : 507904 (496.00 MiB 520.09 MB)
+     Used Dev Size : 253952 (248.00 MiB 260.05 MB)
+      Raid Devices : 4
+     Total Devices : 3
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jan 15 01:40:04 2020
+             State : clean, degraded
+    Active Devices : 3
+   Working Devices : 3
+    Failed Devices : 0
+     Spare Devices : 0
+
+            Layout : near=2
+        Chunk Size : 512K
+
+Consistency Policy : resync
+
+              Name : auto-raid-10:0  (local to host auto-raid-10)
+              UUID : 7e0c179d:abdd902b:24b2b3a3:48feb093
+            Events : 42
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync set-A   /dev/sdb
+       1       8       32        1      active sync set-B   /dev/sdc
+       -       0        0        2      removed
+       3       8       64        3      active sync set-B   /dev/sde
+```
+Для восстановления **RAID** массива необходимо установить в массив новый рабочий диск, мы же установим ранее удаленный **sdd** и посмотрим, как соберется **RAID**.
+```bash
+$ sudo mdadm /dev/md0 --add /dev/sdd
+mdadm: added /dev/sdd
+```
+Был виден процесс сборки массива 
+```bash
+watch cat /proc/mdstat 
+
+Personalities : [raid10]
+md0 : active raid10 sdd[4] sde[3] sdc[1] sdb[0]
+      507904 blocks super 1.2 512K chunks 2 near-copies [4/3] [UU_U]
+      [============>........]  recovery = 60.9% (155136/253952) finish=0.0min speed=155136K/sec
+
+unused devices: <none>
+```
+Массив собран 
+```bash
+watch cat /proc/mdstat 
+
+Personalities : [raid10]
+md0 : active raid10 sdd[4] sde[3] sdc[1] sdb[0]
+      507904 blocks super 1.2 512K chunks 2 near-copies [4/4] [UUUU]
+
+unused devices: <none>
+
+```
+#### 5. Создадим GPT раздел и 5 партиций
