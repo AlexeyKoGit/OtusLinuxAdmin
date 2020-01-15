@@ -155,3 +155,4 @@ Consistency Policy : resync
 
 ```
 #### 3. Ломаем/Чиним RAID
+div.warnbox { background-color:#fcc; border-left: 3px solid #f00; } ~~~~~~ <div class="warnbox"> If you pass null as a parameter the world will end. </div>
