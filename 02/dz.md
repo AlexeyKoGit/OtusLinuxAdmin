@@ -97,5 +97,61 @@ $ sudo yum -y install mdadm
 </details>
 
 ```bash
-sudo mdadm --create --verbose /dev/md0 --level=10 --raid-devices=4 /dev/sdb /dev/sdc /dev/sdd /dev/sde
+$ sudo mdadm --create --verbose /dev/md0 --level=10 --raid-devices=4 /dev/sdb /dev/sdc /dev/sdd /dev/sde
+
+mdadm: layout defaults to n2
+mdadm: layout defaults to n2
+mdadm: chunk size defaults to 512K
+mdadm: size set to 253952K
+mdadm: Defaulting to version 1.2 metadata
+mdadm: array /dev/md0 started.
 ```
+Посмотреть информацию о RAID-ах можно несколькими способами.  
+Кратко
+```bash
+$ cat /proc/mdstat
+
+Personalities : [raid10]
+md0 : active raid10 sdd[4] sde[3] sdc[1] sdb[0]
+      507904 blocks super 1.2 512K chunks 2 near-copies [4/4] [UUUU]
+
+unused devices: <none>
+```
+Подробо
+```bash
+$ $ sudo mdadm -D /dev/md0
+
+/dev/md0:
+           Version : 1.2
+     Creation Time : Tue Jan 14 22:38:52 2020
+        Raid Level : raid10
+        Array Size : 507904 (496.00 MiB 520.09 MB)
+     Used Dev Size : 253952 (248.00 MiB 260.05 MB)
+      Raid Devices : 4
+     Total Devices : 4
+       Persistence : Superblock is persistent
+
+       Update Time : Tue Jan 14 23:31:17 2020
+             State : clean
+    Active Devices : 4
+   Working Devices : 4
+    Failed Devices : 0
+     Spare Devices : 0
+
+            Layout : near=2
+        Chunk Size : 512K
+
+Consistency Policy : resync
+
+              Name : auto-raid-10:0  (local to host auto-raid-10)
+              UUID : 7e0c179d:abdd902b:24b2b3a3:48feb093
+            Events : 39
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync set-A   /dev/sdb
+       1       8       32        1      active sync set-B   /dev/sdc
+       4       8       48        2      active sync set-A   /dev/sdd
+       3       8       64        3      active sync set-B   /dev/sde
+
+```
+#### 3. Ломаем/Чиним RAID
