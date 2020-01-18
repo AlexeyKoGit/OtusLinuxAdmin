@@ -106,6 +106,22 @@ mdadm: size set to 253952K
 mdadm: Defaulting to version 1.2 metadata
 mdadm: array /dev/md0 started.
 ```
+Теперь диски выглядят так
+
+```bash
+$ lsblk
+NAME   MAJ:MIN RM  SIZE RO TYPE   MOUNTPOINT
+sda      8:0    0   40G  0 disk
+`-sda1   8:1    0   40G  0 part   /
+sdb      8:16   0  250M  0 disk
+`-md0    9:0    0  496M  0 raid10
+sdc      8:32   0  250M  0 disk
+`-md0    9:0    0  496M  0 raid10
+sdd      8:48   0  250M  0 disk
+`-md0    9:0    0  496M  0 raid10
+sde      8:64   0  250M  0 disk
+`-md0    9:0    0  496M  0 raid10
+```
 Посмотреть информацию о RAID-ах можно несколькими способами.  
 Кратко
 ```bash
@@ -302,3 +318,126 @@ unused devices: <none>
 
 ```
 #### 5. Создадим GPT раздел и 5 партиций
+У нового **RAID** тип разметки разделов еще не задан, это можно посмотреть:
+```bash
+$ sudo parted /dev/md0
+GNU Parted 3.1
+Using /dev/md0
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+```
+Вводим **p** или **print**
+
+```bash
+(parted) p
+Error: /dev/md0: unrecognised disk label
+Model: Linux Software RAID Array (md)
+Disk /dev/md0: 520MB
+Sector size (logical/physical): 512B/512B
+Partition Table: unknown
+Disk Flags:
+
+Number  Start  End  Size  File system  Name  Flags
+```
+Видим **Partition Table: unknown **
+Зададим разметку **GPT**
+```bash
+(parted) mklabel gpt
+Warning: The existing disk label on /dev/md0 will be destroyed and all data on this disk will be lost. Do you want to continue?
+Yes/No? Yes
+```
+Проверяем
+```bash
+(parted) p
+Model: Linux Software RAID Array (md)
+Disk /dev/md0: 520MB
+Sector size (logical/physical): 512B/512B
+Partition Table: gpt
+Disk Flags:
+
+Number  Start  End  Size  File system  Name  Flags
+```
+Видим **Partition Table: gpt**
+```bash
+(parted) print free
+Model: Linux Software RAID Array (md)
+Disk /dev/md0: 520MB
+Sector size (logical/physical): 512B/512B
+Partition Table: gpt
+Disk Flags:
+
+Number  Start   End    Size   File system  Name  Flags
+        17.4kB  520MB  520MB  Free Space
+```
+Создадим **5** разделов типа **primary**, размером по **104Mb**
+```bash
+mkpart primary ext4 0 104
+mkpart primary ext4 104 208
+```
+Утилита **parted** предложит выровнять раздел согласно используемому размеру сектора, соглашаемся **Yes**.  
+Ввести данную команду потребуется **5** раз смещая начало и конец на **104Mb**.  
+В результате получиться:
+```bash
+(parted) p free
+Model: Linux Software RAID Array (md)
+Disk /dev/md0: 520MB
+Sector size (logical/physical): 512B/512B
+Partition Table: gpt
+Disk Flags:
+
+Number  Start   End    Size    File system  Name     Flags
+ 1      17.4kB  104MB  104MB                primary
+ 2      104MB   208MB  104MB                primary
+ 3      208MB   311MB  104MB                primary
+ 4      311MB   415MB  104MB                primary
+ 5      415MB   519MB  104MB                primary
+        519MB   520MB  1032kB  Free Space
+```
+Также новые разделы видно будет и командой **lsblk**
+```bash
+$ lsblk
+NAME      MAJ:MIN RM  SIZE RO TYPE   MOUNTPOINT
+sda         8:0    0   40G  0 disk
+`-sda1      8:1    0   40G  0 part   /
+sdb         8:16   0  250M  0 disk
+`-md0       9:0    0  496M  0 raid10
+  |-md0p1 259:0    0   99M  0 md
+  |-md0p2 259:1    0   99M  0 md
+  |-md0p3 259:2    0   99M  0 md
+  |-md0p4 259:3    0   99M  0 md
+  `-md0p5 259:4    0   99M  0 md
+sdc         8:32   0  250M  0 disk
+`-md0       9:0    0  496M  0 raid10
+  |-md0p1 259:0    0   99M  0 md
+  |-md0p2 259:1    0   99M  0 md
+  |-md0p3 259:2    0   99M  0 md
+  |-md0p4 259:3    0   99M  0 md
+  `-md0p5 259:4    0   99M  0 md
+sdd         8:48   0  250M  0 disk
+`-md0       9:0    0  496M  0 raid10
+  |-md0p1 259:0    0   99M  0 md
+  |-md0p2 259:1    0   99M  0 md
+  |-md0p3 259:2    0   99M  0 md
+  |-md0p4 259:3    0   99M  0 md
+  `-md0p5 259:4    0   99M  0 md
+sde         8:64   0  250M  0 disk
+`-md0       9:0    0  496M  0 raid10
+  |-md0p1 259:0    0   99M  0 md
+  |-md0p2 259:1    0   99M  0 md
+  |-md0p3 259:2    0   99M  0 md
+  |-md0p4 259:3    0   99M  0 md
+  `-md0p5 259:4    0   99M  0 md
+```
+Как и требовалось в результате мы получили **5** разделов **primary** с использованием **GPT**
+#### 6. Автоматическая сборка RAID
+Для задания (**\*\***) автоматической сборки **RAID**,   массива необходимо
+:
+- внести изменения в **Vagrantfile**;  
+- разрешить синхронизацию директории **хостовой** и **гостевой ОС**;  
+- настроить **provision** секцию для выполнения команд на **гостевой ОС**.   Вынесем команды по созданию **RAID** в отдельный **bash файл**, который будет синхронизирован в **гостевую ОС**, а в секции **provision** пропишем только его запуск.
+
+В **bash** скрипте определим следующие шаги:  
+**#1** проверяем наличие **mdadm**, при необходимости устанавливаем;  
+**#2** проверяем наличие дисков (**sdb, sdc, sdd, sde**);  
+**#3** проверка ранее собранных **RAID** массивов, в случае наличия завершаем выполнение, иначе собираем диски в **RAID**
+
+
