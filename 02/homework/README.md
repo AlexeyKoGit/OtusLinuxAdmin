@@ -89,13 +89,21 @@ sde      8:64   0  250M  0 disk
 Создадим **RAID 10** используя утилиту **mdadm** для управления программными **RAID**-массивами в **Linux**.
 <details>
   <summary>FYI</summary>
-Установка **mdadm**
+Установка mdadm
     
 ```bash
 $ sudo yum -y install mdadm
 ```
 </details>
 
+
+В случае использования дисков ранее находящихся в составе программного рейда, супер-блок нужно занулять. У нас диски чистые, новые и зануление не требуется. 
+```bash
+$ mdadm --zero-superblock /dev/sd[b-d]1
+```
+
+
+Соберем RAID.
 ```bash
 $ sudo mdadm --create --verbose /dev/md0 --level=10 --raid-devices=4 /dev/sdb /dev/sdc /dev/sdd /dev/sde
 
