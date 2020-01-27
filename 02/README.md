@@ -1,6 +1,6 @@
 ## Занятие 02 «Дисковая подсистема»
 ## Задание
-[Домашнее задание](http://example.com/ "Основное задание")
+[Домашнее задание](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/02/homework/ "Основное задание")
 работа с mdadm.  
 добавить в Vagrantfile еще дисков  
 сломать/починить raid  
