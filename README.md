@@ -1,1 +1,1 @@
- «С чего начинается Linux»
+## 01. [«С чего начинается Linux»](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/02)
