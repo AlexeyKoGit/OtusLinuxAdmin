@@ -464,20 +464,6 @@ $ vagrant ssh
 ```
 Результат можно проверить командой **lsblk**
 
-#### 7. Автосборка RAID
-Для автосборки **RAID** необходимо полученный **bash** скрипт **bild_raid10.sh **добавить в **Vagrantfile**, в секцию **provision**
-```ruby
-***
-box.vm.provision :shell, path: "auto_bild_raid1.sh", keep_color: true
-***
-```
-
-
-
-
-
-
-
 Для задания (**\*\***) автоматической сборки **RAID**,   массива необходимо
 :
 - внести изменения в **Vagrantfile**;  

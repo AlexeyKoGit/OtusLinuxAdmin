@@ -2,7 +2,7 @@
 home = ENV['HOME'] # Используем глобальную переменную $HOME
 MACHINES = {
   # VM name "kernel update"
-	:"auto-raid-10" => {
+	:"raid-10" => {
 			# VM box
 			:box_name => "centos/7",
 			# VM CPU count
