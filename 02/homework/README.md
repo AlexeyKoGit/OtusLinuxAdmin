@@ -452,28 +452,33 @@ Vagrantfile
 config.vm.synced_folder ".", "/vagrant", disabled: false
 ***
 ```
-Файлы для тестирования **Vagrantfile**, **bild_raid10.sh** ссылка на [GIT](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/02/homework/1)
-
 Тестирование  
-Поднимаем **BOX** и в нем выполняем скрипт **/vagrant/bild_raid10.sh** 
+Поднимаем **BOX** и в нем выполняем скрипт **/vagrant/bild_raid10.sh**  
+Результат можно проверить командой **lsblk**
 ```bash
 $ vagrant up
 $ vagrant ssh
 [vagrant@raid-10 vagrant]$ cd /vagrant/
 [vagrant@raid-10 vagrant]$ sh bild_raid10.sh
+[vagrant@raid-10 vagrant]$ lsblk
 ```
-Результат можно проверить командой **lsblk**
-
+Файлы для тестирования **Vagrantfile**, **bild_raid10.sh** ссылка на [GIT](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/02/homework/1)
 #### 7. Автосборка RAID
-Для автосборки **RAID** необходимо полученный **bash** скрипт **bild_raid10.sh**добавить в **Vagrantfile**, в секцию **provision**
+Для автосборки **RAID** необходимо полученный **bash** скрипт **bild_raid10.sh** добавить в **Vagrantfile**, в секцию **provision** и разрешить синхронизацию директорий
 ```ruby
+***
+config.vm.synced_folder ".", "/vagrant", disabled: false
 ***
 box.vm.provision :shell, path: "auto_bild_raid1.sh", keep_color: true
 ***
 ```
-
-
-
+Для тестирования поднимем **BOX**, после развертывания **BOX**-а **vagrant** применит скрипт **bild_raid10.sh** 
+```bash
+$ vagrant up
+$ vagrant ssh
+[vagrant@raid-10 vagrant]$ lsblk
+```
+Файлы для тестирования **Vagrantfile**, **bild_raid10.sh** ссылка на [GIT](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/02/homework/1)
 
 
 
