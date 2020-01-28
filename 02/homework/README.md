@@ -346,7 +346,7 @@ Disk Flags:
 
 Number  Start  End  Size  File system  Name  Flags
 ```
-Видим **Partition Table: unknown** 
+Видим **Partition Table: unknown**  
 Зададим разметку **GPT**
 ```bash
 (parted) mklabel gpt
