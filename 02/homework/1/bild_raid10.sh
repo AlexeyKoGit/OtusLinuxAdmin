@@ -6,7 +6,7 @@ YELLOW='\033[1;93;40m'
 GREEN='\033[1;92;40m'
 NORMAL='\033[0m'
 #start
-echo -e "${WHITE}╔═════════════════════════════╗${NORMAL}\n${WHITE}║ Vagrant provision commands  ║${NORMAL}\n${WHITE}╚═════════════════════════════╝${NORMAL}"
+echo -e "${WHITE}╔═════════════════════════════╗${NORMAL}\n${WHITE}║        BUILD RAID10         ║${NORMAL}\n${WHITE}╚═════════════════════════════╝${NORMAL}"
 #1
 echo -e "${WHITE}======= Detected Mdadm  =======${NORMAL}"
 v_install=`sudo yum list installed | grep mdadm`
