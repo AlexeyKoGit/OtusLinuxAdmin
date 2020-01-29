@@ -51,31 +51,31 @@ v_tmp=$(echo $v_install | grep -c 'mdadm')
 if [ "$v_tmp" = "0" ]; then echo -e "${RED}[ERROR]${NORMAL} Mdadm not installed,   run stop"; else echo -e "Mdadm installation completed!"; fi  
 echo -e "${WHITE}======== Search disks  ========${NORMAL}"  
 lsblk  
-#v_count=`lsblk --output NAME | grep -P '^sd.' | wc -l`
-v_list=$(lsblk --output NAME | grep -P '^sd.')
-v_x=`lsblk | grep -P '/$'`
-v_disks=""
-for i in $v_list; do
-    if ! [[ "$v_x" == *"$i"* ]]; then
-      #echo "$i"
-      v_disks="$v_disks /dev/$i"
-    else
-    v_disk_for_root=$i
-    fi
-done
-echo -e "Detected disks $v_disks"
-echo -e "Root "/" - $v_disk_for_root"
+#v_count=`lsblk --output NAME | grep -P '^sd.' | wc -l`  
+v_list=$(lsblk --output NAME | grep -P '^sd.')  
+v_x=`lsblk | grep -P '/$'`  
+v_disks=""  
+for i in $v_list; do  
+    if ! [[ "$v_x" == *"$i"* ]]; then  
+      #echo "$i"  
+      v_disks="$v_disks /dev/$i"  
+    else  
+    v_disk_for_root=$i  
+    fi  
+done  
+echo -e "Detected disks $v_disks"  
+echo -e "Root "/" - $v_disk_for_root"  
 #3
-echo -e "${WHITE}======= Creating RAID10 =======${NORMAL}"
-v_tmp=`lsblk --output TYPE | grep -P 'raid' | wc -l`
-if ! [ "$v_tmp" -eq 0  ]
-then
-    echo -e "${RED}[WARN]${NORMAL} RAID found, run stop"
-    exit
-else
-  echo -e "RAID not found, crate RAID10"
-fi
-# /dev/sdb /dev/sdc /dev/sdd /dev/sde#
+echo -e "${WHITE}======= Creating RAID10 =======${NORMAL}"  
+v_tmp=`lsblk --output TYPE | grep -P 'raid' | wc -l`  
+if ! [ "$v_tmp" -eq 0  ]  
+then  
+    echo -e "${RED}[WARN]${NORMAL} RAID found, run stop"  
+    exit  
+else  
+  echo -e "RAID not found, crate RAID10"  
+fi  
+\# /dev/sdb /dev/sdc /dev/sdd /dev/sde#
 yes y | sudo mdadm --create --verbose /dev/md0 --level=10 --raid-devices=4$v_disks
 ##v_tmp=`yes y | sudo mdadm --create --verbose /dev/md0 --level=10 --raid-devices=4$v_disks 2>/dev/null`
 cat /proc/mdstat | grep -v 'resync'
