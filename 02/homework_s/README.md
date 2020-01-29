@@ -26,9 +26,9 @@ URLs:
 
 Для задания (**\*\***) автоматической сборки **RAID**,   массив
 необходимо прописать соответствующие команды в **Vagrantfile**.  
-Создадим переменную с **bash**-текстом команд.
-etails>
-  <summary>Vagrantfile</summary>
+Создадим переменную с **bash**-текстом команд.  
+<details>
+  <summary> Vagrantfile </summary>
 ```ruby
 ***
 $script = <<-SCRIPT
@@ -113,4 +113,4 @@ echo -e "${WHITE}╚════════════════════
 SCRIPT
 ***
 ```
-details>
+</details>
