@@ -46,11 +46,11 @@ config.vm.synced_folder ".", "/vagrant", disabled: false
 ```
 #### 2 Переносим ОС
 2.1 Установим **mdadm**  
-```shell
+```bash
 $ sudo yum -y install mdadm
 ```
 2.2 Смотрим начальную конфигурацию дисков командой **lsblk**
-```shell
+```bash
 $ lsblk
 NAME   MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
 sda      8:0    0  40G  0 disk
@@ -59,11 +59,11 @@ sdb      8:16   0  40G  0 disk
 ```
 
 2.3. Для удобства перейдем под пользователя **root**  
-```shell
+```bash
 $ sudo -u root -i
 ```
 2.4. Копируем разметку на новый диск
-```shell
+```bash
 # sfdisk -d /dev/sda | sfdisk /dev/sdb
 Checking that no-one is using this disk right now ...
 OK
@@ -92,7 +92,7 @@ to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1
 (See fdisk(8).)
 ```
 2.5. Изменим тип таблицы разделов на втором диске на **Linux raid autodetect**
-```shell
+```bash
 # (echo t; echo fd; echo w) | fdisk /dev/sdb
 Welcome to fdisk (util-linux 2.23.2).
 
@@ -109,7 +109,7 @@ Calling ioctl() to re-read partition table.
 Syncing disks.
 ```
 2.6  Создадим **RAID1** с одним диском в режиме **degraded**
-```shell
+```bash
 # yes y | mdadm --create /dev/md0 --level=1 --raid-disk=2 missing /dev/sdb1
 mdadm: Note: this array has metadata at the start and
     may not be suitable as a boot device.  If you plan to
@@ -120,7 +120,7 @@ Continue creating array? mdadm: Defaulting to version 1.2 metadata
 mdadm: array /dev/md0 started.
 ```
 2.7. Форматируем **RAID** раздел
-```shell
+```bash
 # mkfs.xfs /dev/md0
 meta-data=/dev/md0               isize=512    agcount=4, agsize=2619264 blks
          =                       sectsz=512   attr=2, projid32bit=1
@@ -133,25 +133,25 @@ log      =internal log           bsize=4096   blocks=5115, version=2
 realtime =none                   extsz=4096   blocks=0, rtextents=0
 ```
 2.8. Монтируем **RAID** раздел  
-```shell
+```bash
 # mount /dev/md0 /mnt/
 ```
 2.9. Копируем файлы системы (*Обязательно нужно копировать с контекстом **SELinux***). Процедура занимает время.
-```shell
+```bash
 cp -dpRxf --preserve=context / /mnt/
 ```
 2.10. Монтируем системные каталоги и делаем **chroot**
-```shell
+```bash
 [root@raid-1 ~]# mount --bind /proc /mnt/proc && mount --bind /dev /mnt/dev && mount --bind /sys /mnt/sys && mount --bind /run /mnt/run && chroot /mnt/
 [root@raid-1 /]#
 ```
 2.11. Заносим информацию о **RAID** массивах в файл конфигурации **mdadm** (*как понял в новых версиях не обязательно*)  
-```shell
+```bash
 # mdadm --detail --scan > /etc/mdadm.conf
 ```
 2.12. Правим **/etc/fstab**, меняем **UUID** раздела **sda1** корня, на **UUID** раздела **RAID** массива **md0**  
 Чтобы посмотреть **UUID** можно использовать **lsblk** с нужным набором столбцов
-```shell
+```bash
 # lsblk --output NAME,FSTYPE,MAJ:MIN,RM,SIZE,RO,TYPE,UUID,MOUNTPOINT
 NAME    FSTYPE            MAJ:MIN RM SIZE RO TYPE  UUID                                 MOUNTPOINT
 sda                         8:0    0  40G  0 disk
@@ -161,7 +161,7 @@ sdb                         8:16   0  40G  0 disk
   `-md0 xfs                 9:0    0  40G  0 raid1 8d710930-e0fc-4dea-b94e-d5fddcf389ef /
 ```
 2.13. Получаем **/etc/fstab** такой
-```shell
+```bash
 #
 # /etc/fstab
 # Created by anaconda on Sat Jun  1 17:13:31 2019
@@ -173,17 +173,17 @@ UUID=8d710930-e0fc-4dea-b94e-d5fddcf389ef /                       xfs     defaul
 /swapfile none swap defaults 0 0
 ```
 2.14. Делаем бэкап **initramfs** *(не обязательно)*
-```shell
+```bash
 # mv /boot/initramfs-3.10.0-957.12.2.el7.x86_64.img /boot/initramfs-3.10.0-957.12.2.el7.x86_64.img.bak
 ```
 2.15. Делаем новый **initramfs**. Процедура занимает время
-```shell
+```bash
 # dracut /boot/initramfs-$(uname -r).img $(uname -r)
 /sbin/dracut: line 679: warning: setlocale: LC_MESSAGES: cannot change locale (ru_RU.UTF-8): No such file or directory
 /sbin/dracut: line 680: warning: setlocale: LC_CTYPE: cannot change locale (ru_RU.UTF-8): No such file or directory
 ```
 2.16. Передаем ядру опцию **«rd.auto=1»** через **«GRUB»**, для этого, добавляем ее в **«GRUB_CMDLINE_LINUX»:** в файл **/etc/default/grub**
-```shell
+```bash
 GRUB_TIMEOUT=1
 GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
 GRUB_DEFAULT=saved
@@ -193,7 +193,7 @@ GRUB_CMDLINE_LINUX="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnam
 GRUB_DISABLE_RECOVERY="true"
 ```
 2.17. Перепишем конфиг **«GRUB»** и установим его на наш диск **sdb**
-```shell
+```bash
 # grub2-mkconfig -o /boot/grub2/grub.cfg && grub2-install /dev/sdb
 Generating grub configuration file ...
 /usr/sbin/grub2-probe: warning: Couldn't find physical volume `(null)'. Some modules may be missing from core image..
@@ -210,13 +210,13 @@ grub2-install: warning: Couldn't find physical volume `(null)'. Some modules may
 Installation finished. No error reported.
 ```
 2.18. Убеждаемся, что **UUID md0** и опция **«rd.auto=1»** точно записались
-```shell
+```bash
 # cat /boot/grub2/grub.cfg
 ```
 <details>
-  <summary>FYI</summary>
+  <summary>/boot/grub2/grub.cfg</summary>
   
-```shell
+```bash
 # cat /boot/grub2/grub.cfg
 #
 # DO NOT EDIT THIS FILE
@@ -350,3 +350,70 @@ fi
 
 ```
 </details>
+
+Для проверки запуска с **RAID1** можно перезагрузить **BOX**, выбрать нужный диск при старте или отключить основной диск в настройках, мы же эту проверку делать не будем, так как у нас уже рабочий кейс.  
+2.19. Записываем **GRUB** на диск **sda**
+```bash
+grub2-install /dev/sda
+Installing for i386-pc platform.
+grub2-install: warning: Couldn't find physical volume `(null)'. Some modules may be missing from core image..
+grub2-install: warning: Couldn't find physical volume `(null)'. Some modules may be missing from core image..
+Installation finished. No error reported.
+```
+2.20. Выходим из **chroot** и перезапускаем **BOX**
+```bash
+# exit
+exit
+[root@raid-1 ~]# reboot
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+```
+2.21. Подключаемся к **BOX**-у и проверяем с какого диска загружена система
+```bash
+$ lsblk --output NAME,FSTYPE,MAJ:MIN,RM,SIZE,RO,TYPE,UUID,MOUNTPOINT
+NAME    FSTYPE            MAJ:MIN RM SIZE RO TYPE  UUID                                 MOUNTPOINT
+sda                         8:0    0  40G  0 disk
+`-sda1  xfs                 8:1    0  40G  0 part  8ac075e3-1124-4bb6-bef7-a6811bf8b870
+sdb                         8:16   0  40G  0 disk
+`-sdb1  linux_raid_member   8:17   0  40G  0 part  87322e43-5a02-1f34-dc9e-755f0ba5bdd5
+  `-md0 xfs                 9:0    0  40G  0 raid1 8d710930-e0fc-4dea-b94e-d5fddcf389ef /
+```
+2.22. На диске также меняем тип таблицы разделов на **Linux raid autodetect**
+```bash
+$ (echo t; echo fd; echo w) | sudo fdisk /dev/sda
+Welcome to fdisk (util-linux 2.23.2).
+
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+
+Command (m for help): Selected partition 1
+Hex code (type L to list all codes): Changed type of partition 'Linux' to 'Linux raid autodetect'
+
+Command (m for help): The partition table has been altered!
+
+Calling ioctl() to re-read partition table.
+Syncing disks.
+```
+2.23. Добавляем раздел в **RAID**
+```bash
+$ sudo mdadm /dev/md0 --add /dev/sda1
+mdadm: added /dev/sda1
+```
+2.24 Смотрим за синхронизацией диска. Процедура занимает время.
+```bash
+$ watch cat /proc/mdstat
+
+Every 2.0s: cat /proc/mdstat                                                                                                                Wed Jan 29 20:39:25 2020
+
+Personalities : [raid1]
+md0 : active raid1 sda1[2] sdb1[1]
+      41908224 blocks super 1.2 [2/1] [_U]
+      [========>............]  recovery = 41.0% (17196288/41908224) finish=3.8min speed=106008K/sec
+
+unused devices: <none>
+```
+2.23. В результате окончания синхронизации увидим
+```bash
+
+```
