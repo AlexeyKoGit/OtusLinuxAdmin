@@ -31,6 +31,7 @@ URLs:
   <summary> Vagrantfile </summary>
 
 ```bash {.line-numbers}
+***
 $script = <<-SCRIPT
   
 #!/bin/sh
@@ -184,6 +185,17 @@ echo -e "${WHITE}╚════════════════════
 #lsblk
   
 SCRIPT
+***
 ```
 
 </details>
+
+Теперь добавим полученную текстовую переменную с командами в раздел **provision**
+```ruby
+***
+box.vm.provision "shell", inline: $script, keep_color: true
+***
+```
+Для проверки достаточно поднять **BOX** используя полученный **Vagrantfile**
+
+Файл для тестирования **Vagrantfile** ссылка на [GIT](https://github.com/AlexeyKoGit/OtusLinuxAdmin/blob/master/02/homework_s/Vagrantfile)
