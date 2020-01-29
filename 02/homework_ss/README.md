@@ -415,5 +415,23 @@ unused devices: <none>
 ```
 2.23. В результате окончания синхронизации увидим
 ```bash
+Every 2.0s: cat /proc/mdstat                                                                                                                Wed Jan 29 20:43:59 2020
 
+Personalities : [raid1]
+md0 : active raid1 sda1[2] sdb1[1]
+      41908224 blocks super 1.2 [2/2] [UU]
+
+unused devices: <none>
 ```
+2.24. Смотрим вывод **lsblk**
+```bash
+$ lsblk --output NAME,FSTYPE,MAJ:MIN,RM,SIZE,RO,TYPE,UUID,MOUNTPOINT
+NAME    FSTYPE            MAJ:MIN RM SIZE RO TYPE  UUID                                 MOUNTPOINT
+sda                         8:0    0  40G  0 disk
+`-sda1  linux_raid_member   8:1    0  40G  0 part  87322e43-5a02-1f34-dc9e-755f0ba5bdd5
+  `-md0 xfs                 9:0    0  40G  0 raid1 8d710930-e0fc-4dea-b94e-d5fddcf389ef /
+sdb                         8:16   0  40G  0 disk
+`-sdb1  linux_raid_member   8:17   0  40G  0 part  87322e43-5a02-1f34-dc9e-755f0ba5bdd5
+  `-md0 xfs                 9:0    0  40G  0 raid1 8d710930-e0fc-4dea-b94e-d5fddcf389ef /
+```
+Задание выполнено.
