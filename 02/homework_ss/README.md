@@ -215,6 +215,7 @@ Installation finished. No error reported.
 ```
 <details>
   <summary>FYI</summary>
+  
 ```shell
 # test
 ```
