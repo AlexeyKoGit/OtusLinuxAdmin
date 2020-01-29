@@ -462,7 +462,7 @@ $ vagrant ssh
 [vagrant@raid-10 vagrant]$ sh bild_raid10.sh
 [vagrant@raid-10 vagrant]$ lsblk
 ```
-Файлы для тестирования **Vagrantfile**, **bild_raid10.sh** ссылка на [GIT](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/02/homework/1)
+Файлы для тестирования **Vagrantfile**, **bild_raid10.sh**, ссылка на [GIT](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/02/homework/1)
 #### 7. Автосборка RAID
 Для автосборки **RAID** необходимо полученный **bash** скрипт **auto_bild_raid10.sh** добавить в **Vagrantfile**, в секцию **provision** и разрешить синхронизацию директорий
 ```ruby
@@ -478,4 +478,4 @@ $ vagrant up
 $ vagrant ssh
 [vagrant@raid-10 vagrant]$ lsblk
 ```
-Файлы для тестирования **Vagrantfile**, **bild_raid10.sh** ссылка на [GIT](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/02/homework/2)
+Файлы для тестирования **Vagrantfile**, **bild_raid10.sh**, ссылка на [GIT](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/02/homework/2)
