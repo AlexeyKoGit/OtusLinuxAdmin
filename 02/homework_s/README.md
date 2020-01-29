@@ -29,28 +29,28 @@ URLs:
 Создадим переменную с **bash**-текстом команд.  
 <details>
   <summary> Vagrantfile </summary>
-```ruby
-***
-$script = <<-SCRIPT
-#!/bin/sh
-#ini
-WHITE='\033[1;97;40m'
-RED='\033[1;91;40m'
-YELLOW='\033[1;93;40m'
-GREEN='\033[1;92;40m'
-NORMAL='\033[0m'
-#start
-echo -e "${WHITE}╔═════════════════════════════╗${NORMAL}\n${WHITE}║ Vagrant provision commands  ║${NORMAL}\n${WHITE}╚═════════════════════════════╝${NORMAL}"
-#1
-echo -e "${WHITE}======= Detected Mdadm  =======${NORMAL}"
-v_install=`sudo yum list installed`
-v_tmp=$(echo $v_install | grep -c 'mdadm')
-if [ "$v_tmp" = "0" ]; then echo -e "${YELLOW}[WARNING]${NORMAL} Mdadm not installed!"; v_tmp=`sudo yum -y install mdadm 2>/dev/null`; wait; fi
-v_install=`sudo yum list installed`
-v_tmp=$(echo $v_install | grep -c 'mdadm')
-if [ "$v_tmp" = "0" ]; then echo -e "${RED}[ERROR]${NORMAL} Mdadm not installed, run stop"; else echo -e "Mdadm installation completed!"; fi
-echo -e "${WHITE}======== Search disks  ========${NORMAL}"
-lsblk
+
+\***  
+$script = <<-SCRIPT  
+#!/bin/sh  
+#ini  
+WHITE='\033[1;97;40m'  
+RED='\033[1;91;40m'  
+YELLOW='\033[1;93;40m'  
+GREEN='\033[1;92;40m'  
+NORMAL='\033[0m'  
+#start  
+echo -e "${WHITE}╔═════════════════════════════╗${NORMAL}\n${WHITE}║ Vagrant     provision commands  ║${NORMAL}\n${WHITE}╚═════════════════════════════╝${NORMAL}"  
+#1  
+echo -e "${WHITE}======= Detected Mdadm  =======${NORMAL}"  
+v_install=`sudo yum list installed`  
+v_tmp=$(echo $v_install | grep -c 'mdadm')  
+if [ "$v_tmp" = "0" ]; then echo -e "${YELLOW}[WARNING]${NORMAL} Mdadm not   installed!"; v_tmp=`sudo yum -y install mdadm 2>/dev/null`; wait; fi  
+v_install=`sudo yum list installed`  
+v_tmp=$(echo $v_install | grep -c 'mdadm')  
+if [ "$v_tmp" = "0" ]; then echo -e "${RED}[ERROR]${NORMAL} Mdadm not installed,   run stop"; else echo -e "Mdadm installation completed!"; fi  
+echo -e "${WHITE}======== Search disks  ========${NORMAL}"  
+lsblk  
 #v_count=`lsblk --output NAME | grep -P '^sd.' | wc -l`
 v_list=$(lsblk --output NAME | grep -P '^sd.')
 v_x=`lsblk | grep -P '/$'`
@@ -111,6 +111,6 @@ if [ "$v_tmp" = "5" ]; then echo -e "${WHITE}║ Five partition - created ${GREE
 echo -e "${WHITE}╚═════════════════════════════════════╝${NORMAL}"
 #lsblk
 SCRIPT
-***
-```
+\***
+
 </details>
