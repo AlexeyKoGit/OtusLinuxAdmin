@@ -30,7 +30,7 @@ URLs:
 <details>
   <summary> Vagrantfile </summary>
 
-```javascript {.line-numbers}
+```bash {.line-numbers}
 $script = <<-SCRIPT
   
 #!/bin/sh
