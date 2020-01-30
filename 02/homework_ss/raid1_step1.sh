@@ -6,7 +6,7 @@ YELLOW='\033[1;93;40m'
 GREEN='\033[1;92;40m'
 NORMAL='\033[0m'
 #start
-echo -e "${WHITE}╔═════════════════════════════╗${NORMAL}\n${WHITE}║ Vagrant provision commands  ║${NORMAL}\n${WHITE}╚═════════════════════════════╝${NORMAL}"
+echo -e "${WHITE}╔═════════════════════════════╗${NORMAL}\n${WHITE}║        RAID1 Step 1         ║${NORMAL}\n${WHITE}╚═════════════════════════════╝${NORMAL}"
 #sudo sudo setenforce 0
 echo "Install Mdadm"
 v_tmp=`sudo yum -y install mdadm mc 2>/dev/null`
