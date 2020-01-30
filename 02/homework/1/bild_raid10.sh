@@ -72,7 +72,7 @@ v_tmp=`sudo parted -s --script /dev/md0 'print free' | grep -c 'gpt'`
 if [ $v_tmp != 0 ]; then echo -e "${WHITE}║            GPT - created ${GREEN}successful${WHITE} ║${NORMAL}\n"; else echo -e "${WHITE}║            GPT - created ${RED}failed     ${WHITE}║${NORMAL}\n"; fi
 v_tmp=`sudo parted -s --script /dev/md0 'print free' | grep -c 'primary'`
 if [ $v_tmp = 5 ]; then echo -e "${WHITE}║ Five partition - created ${GREEN}successful${WHITE} ║${NORMAL}\n"; else echo -e "${WHITE}║ Five partition - created ${RED}failed     ${WHITE}║${NORMAL}\n"; fi
-
+echo -e "${WHITE}╚═════════════════════════════════════╝${NORMAL}"
 
 echo -e "\
 ${WHITE}╔=====================================╗${NORMAL}\n\
