@@ -116,4 +116,4 @@ box.vm.provision "shell", inline: $script, keep_color: true
 ```
 Для проверки достаточно поднять **BOX** используя полученный **Vagrantfile**
 
-**Vagrantfile** для тестирования, ссылка на [GIT](https://github.com/AlexeyKoGit/OtusLinuxAdmin/blob/master/02/homework_s/Vagrantfile)
+**Vagrantfile** для тестирования, ссылка на [GIT](https://github.com/AlexeyKoGit/OtusLinuxAdmin/blob/master/02/homework_s)
