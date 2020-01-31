@@ -66,7 +66,7 @@ Vagrant.configure("2") do |config|
 		end
 		#_!
       end
-	  #box.vm.provision :shell, path: "auto_bild_raid1.sh", keep_color: true
+	  box.vm.provision :shell, path: "raid1_step1.sh", keep_color: true
 	  #box.vm.provision "shell", inline: <<-SHELL
 	  #    cd /vagrant
 	  #  bash ./auto_bild_raid10.sh 

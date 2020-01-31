@@ -8,19 +8,22 @@ NORMAL='\033[0m'
 #start
 echo -e "${WHITE}╔═════════════════════════════╗${NORMAL}\n${WHITE}║        RAID1 Step 1         ║${NORMAL}\n${WHITE}╚═════════════════════════════╝${NORMAL}"
 #sudo sudo setenforce 0
-echo "Install Mdadm"
-v_tmp=`sudo yum -y install mdadm mc 2>/dev/null`
-echo "Copy partition table sda->sdb"
+echo -e "${WHITE}========== Install Mdadm${NORMAL}"
+#1
+echo -e "${WHITE}========== Detect Mdadm${NORMAL}"
+v_tmp=`sudo yum list installed | grep -c 'mdadm' 2>/dev/null`
+if [ $v_tmp = 0 ]; then echo -e "${YELLOW}[WARNING]${NORMAL} Mdadm не установлен\nУстановка Mdadm"; v_n=`sudo yum -y install mdadm 2>/dev/null`; wait; fi
+v_tmp=`sudo yum list installed | grep -c 'mdadm' 2>/dev/null`
+if [ $v_tmp = 0 ]; then echo -e "${RED}[ERROR]${NORMAL} Mdadm установить не удалось\nРабота завершена с ошибкой"; exit; else echo -e "Mdadm ${GREEN}установлен${NORMAL}"; fi
+#2
+echo -e "${WHITE}========== Copy partition table sda->sdb${NORMAL}"
 v_tmp=`sudo sfdisk -d /dev/sda | sfdisk /dev/sdb  2>/dev/null`
-echo "Set fd  Linux raid autodetect /dev/sdb"
+echo -e "${WHITE}========== Change partition identifier on 0xFD (Linux raid autodetect) /dev/sdb${NORMAL}"
 v_tmp=`(echo t; echo fd; echo w) | sudo fdisk /dev/sdb`
-echo "Change partition identifier on 0xFD (Linux raid autodetect)"
+echo -e "${WHITE}========== Creating RAID1${NORMAL}"
 yes y | sudo mdadm --create /dev/md0 --level=1 --raid-disk=2 missing /dev/sdb1
 sleep 10
-##v_tmp=`yes y | sudo mdadm --create /dev/md0 --level=1 --raid-devices= missing /dev/sdb1`
-##--raid-devices=2 /dev/sdb1 missing.
-##v_tmp=`yes y | sudo mdadm --create /dev/md0 --level=10 --raid-devices=4$v_disks 2>/dev/null`
-echo "Format type FS xfs"
+echo -e "${WHITE}========== Format type FS xfs${NORMAL}"
 v_tmp=`sudo mkfs.xfs /dev/md0`
 uuid_root_part=`lsblk --output UUID,MOUNTPOINT | grep -P ' /$' | grep -oP '^.{36}'`
 uuid_raid_part=`lsblk --output UUID,TYPE | grep -P 'raid' | grep -oP '^.{36}'`
@@ -52,5 +55,6 @@ dracut /boot/initramfs-$(uname -r).img $(uname -r)
 sed -i 's/'"$cmd_l"'/'"$cmd_ln"'/g' /etc/default/grub
 grub2-mkconfig -o /boot/grub2/grub.cfg
 grub2-install /dev/sdb
+grub2-install /dev/sda
 EOF
 echo "==RAID=="
