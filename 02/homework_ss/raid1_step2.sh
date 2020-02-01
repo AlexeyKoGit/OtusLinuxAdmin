@@ -14,4 +14,4 @@ sudo sudo mdadm /dev/md0 --add /dev/sda1
 sudo watch cat /proc/mdstat
 echo -e "${WHITE}========== lsblk Финальный${NORMAL}"
 lsblk --output NAME,FSTYPE,MAJ:MIN,RM,SIZE,RO,TYPE,UUID,MOUNTPOINT
-echo -e "${GREEN}OS move to RAID1 complete${NORMAL}"
+echo -e "${GREEN}========== OS move to RAID1 complete${NORMAL}"
