@@ -41,7 +41,7 @@ echo -e "${WHITE}════════ LVM Creating Logical Volumes${NORMAL}"
 sudo lvcreate -n lv_tmp_root -l +100%FREE /dev/vg_tmp_root
 sudo lvcreate -n lv_home -l +50%FREE /dev/vg_home
 #
-sudo lvcreate -s -n s_shot_home -l +50%FREE /dev/vg_home/lv_home
+sudo lvcreate -s -n s_shot_home -l +100%FREE /dev/vg_home/lv_home
 
 #sudo lvcreate -L10G -s -n snaphot_test.local /dev/vmstore/test.local
 
