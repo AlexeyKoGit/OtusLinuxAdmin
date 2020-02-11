@@ -37,6 +37,7 @@ Vagrant.configure("2") do |config|
 
     config.vm.box_version = "1804.02"
     MACHINES.each do |boxname, boxconfig|
+		config.vm.synced_folder ".", "/vagrant", disabled: false
   
         config.vm.define boxname do |box|
   
@@ -64,7 +65,7 @@ Vagrant.configure("2") do |config|
                        end
                     end
             end
-  
+			box.vm.provision :shell, path: "lvm_step1.sh", keep_color: true
 			#box.vm.provision "shell", inline: <<-SHELL
 			#mkdir -p ~root/.ssh
 			#cp ~vagrant/.ssh/auth* ~root/.ssh
