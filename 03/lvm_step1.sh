@@ -1,5 +1,5 @@
 #!/bin/sh
-##sudo yum -y install mc
+v_tmp=`sudo yum -y install mc 2>/dev/null`
 #ini
 WHITE='\033[1;97;40m'
 RED='\033[1;91;40m'
@@ -7,6 +7,7 @@ YELLOW='\033[1;93;40m'
 GREEN='\033[1;92;40m'
 NORMAL='\033[0m'
 #start
+sudo yum -y install mc
 label="${WHITE}║        LVM STEP 1           ║${NORMAL}"
 echo -e "${WHITE}╔═════════════════════════════╗${NORMAL}\n${WHITE}$label${NORMAL}\n${WHITE}╚═════════════════════════════╝${NORMAL}"
 lsblk
@@ -63,8 +64,8 @@ v_tmp=`sudo mkfs.xfs /dev/vg_tmp_root/lv_tmp_root 2>/dev/null`
 v_tmp=`sudo mkfs.ext4 /dev/vg_home/lv_home 2>/dev/null`
 v_tmp=`sudo mkfs.ext4 /dev/vg_home/s_shot_lv_home 2>/dev/null`
 v_tmp=`sudo mkfs.ext4 /dev/vg_var/mirror_lv_var 2>/dev/null`
-blkid | grep -P '(xfs|ext4)' | grep '/vg_'
-echo -e "${WHITE}════════ Creating Mount Points${NORMAL}"
+sudo blkid | grep -P '(xfs|ext4)' | grep '/vg_'
+echo -e "${WHITE}════════ Create Directories For Mount Points${NORMAL}"
 sudo mkdir /mnt/v_tmp_root
 sudo mkdir /mnt/v_home
 sudo mkdir /mnt/v_var
@@ -75,6 +76,54 @@ sudo mount /dev/vg_home/lv_home/ /mnt/v_home
 sudo mount /dev/vg_var/mirror_lv_var/ /mnt/v_var
 mount | grep '/vg_'
 echo -e "${WHITE}════════ Copying Data${NORMAL}"
+echo "/ copy-> /mnt/v_tmp_root/"
 sudo cp -dpRxf --preserve=context / /mnt/v_tmp_root/
-sudo cp -dpRf --preserve=context /home /mnt/v_home/
-sudo cp -dpRf --preserve=context /var /mnt/v_var/
+sudo rm -r /mnt/v_tmp_root/home/*
+sudo rm -r /mnt/v_tmp_root/var/*
+echo "/home/* copy-> /mnt/v_home/"
+sudo cp -dpRxf --preserve=context /home/* /mnt/v_home/
+echo "/var/* copy-> /mnt/v_var/"
+sudo cp -dpRxf --preserve=context /var/* /mnt/v_var/
+echo -e "${WHITE}════════ Modify Fstab Config${NORMAL}"
+#lsblk --output NAME,FSTYPE,MAJ:MIN,RM,SIZE,RO,TYPE,UUID,MOUNTPOINT
+root_uiid=`lsblk --output NAME,UUID | grep 'VolGroup00-LogVol00' | grep -oP '[-\w]+$'`
+root_tmp_uiid=`lsblk --output NAME,UUID | grep 'vg_tmp_root-lv_tmp_root' | grep -oP '[-\w]+$'`
+home_uiid=`lsblk --output NAME,UUID | grep 'vg_home-lv_home' | grep -oP '[-\w]+$'`
+var_uiid=`lsblk --output NAME,UUID | grep 'vg_var-mirror_lv_var' | grep -oP -m1 '[-\w]+$'`
+echo -e "root uiid\t$root_uiid"
+echo -e "root tmp uiid\t$root_tmp_uiid"
+echo -e "home uiid\t$home_uiid"
+echo -e "var uiid\t$var_uiid"
+echo " Old state fstab"
+cat /mnt/v_tmp_root/etc/fstab | grep -vP '^#'
+echo " UIID LVM"
+echo " New state fstab"
+sudo sed -i 's|VolGroup00-LogVol00|vg_tmp_root-lv_tmp_root|g' /mnt/v_tmp_root/etc/fstab
+sudo sed -i '$ a UUID='"$home_uiid"' /home                   ext4     defaults        0 0' /mnt/v_tmp_root/etc/fstab
+sudo sed -i '$ a UUID='"$var_uiid"' /var                   ext4     defaults        0 0' /mnt/v_tmp_root/etc/fstab
+echo ""
+cat /mnt/v_tmp_root/etc/fstab | grep -vP '^#'
+echo -e "${WHITE}════════ Modify Grub Config${NORMAL}"
+sudo sed -i 's|VolGroup00/LogVol00|vg_tmp_root/lv_tmp_root|g' /mnt/v_tmp_root/etc/default/grub
+cat /mnt/v_tmp_root/etc/default/grub | grep 'GRUB_CMDLINE_LINUX'
+echo -e "${WHITE}════════ Chroot${NORMAL}"
+sudo mount --bind /proc /mnt/v_tmp_root/proc
+sudo mount --bind /dev /mnt/v_tmp_root/dev
+sudo mount --bind /sys /mnt/v_tmp_root/sys
+sudo mount --bind /run /mnt/v_tmp_root/run
+sudo mount --bind /boot /mnt/v_tmp_root/boot
+sudo mount --bind /var /mnt/v_tmp_root/var
+#
+cat << EOF | sudo chroot /mnt/v_tmp_root
+grub2-mkconfig -o /boot/grub2/grub.cfg
+EOF
+echo -e "${WHITE}════════ After Rebooting The PC, Run /vagrant/lvm_step2.sh${NORMAL}"
+echo "Reboot BOX"
+sudo reboot
+
+#cat << EOF | sudo chroot /mnt/v_tmp_root 
+#mv /boot/initramfs-3.10.0-862.2.3.el7.x86_64.img /boot/initramfs-3.10.0-862.2.3.el7.x86_64.img.bak
+#dracut /boot/initramfs-$(uname -r).img $(uname -r)
+#sed -i 's|VolGroup00/LogVol00|vg_tmp_root/lv_tmp_root|g' /etc/default/grub
+#grub2-mkconfig -o /boot/grub2/grub.cfg
+#EOF
