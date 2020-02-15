@@ -7,7 +7,6 @@ YELLOW='\033[1;93;40m'
 GREEN='\033[1;92;40m'
 NORMAL='\033[0m'
 #start
-sudo yum -y install mc
 label="${WHITE}║        LVM STEP 1           ║${NORMAL}"
 echo -e "${WHITE}╔═════════════════════════════╗${NORMAL}\n${WHITE}$label${NORMAL}\n${WHITE}╚═════════════════════════════╝${NORMAL}"
 lsblk

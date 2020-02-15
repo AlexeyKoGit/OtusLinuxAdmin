@@ -1,5 +1,4 @@
 #!/bin/sh
-v_tmp=`sudo yum -y install mc 2>/dev/null`
 #ini
 WHITE='\033[1;97;40m'
 RED='\033[1;91;40m'
@@ -7,7 +6,6 @@ YELLOW='\033[1;93;40m'
 GREEN='\033[1;92;40m'
 NORMAL='\033[0m'
 #start
-sudo yum -y install mc
 label="${WHITE}║        LVM STEP 2           ║${NORMAL}"
 echo -e "${WHITE}╔═════════════════════════════╗${NORMAL}\n${WHITE}$label${NORMAL}\n${WHITE}╚═════════════════════════════╝${NORMAL}"
 sudo lvs
@@ -32,15 +30,17 @@ echo -e "root tmp uiid\t$root_tmp_uiid"
 sudo sed -i 's|vg_tmp_root-lv_tmp_root|VolGroup00-LogVol00|g' /mnt/etc/fstab
 cat /mnt/etc/fstab | grep -vP '^#'
 echo -e "${WHITE}════════ Chroot${NORMAL}"
-sudo mount --bind /proc /mnt/v_tmp_root/proc
-sudo mount --bind /dev /mnt/v_tmp_root/dev
-sudo mount --bind /sys /mnt/v_tmp_root/sys
-sudo mount --bind /run /mnt/v_tmp_root/run
-sudo mount --bind /boot /mnt/v_tmp_root/boot
-sudo mount --bind /var /mnt/v_tmp_root/var
+sudo mount --bind /proc /mnt/proc
+sudo mount --bind /dev /mnt/dev
+sudo mount --bind /sys /mnt/sys
+sudo mount --bind /run /mnt/run
+sudo mount --bind /boot /mnt/boot
+sudo mount --bind /var /mnt/var
 #
 cat << EOF | sudo chroot /mnt
 sed -i 's|vg_tmp_root/lv_tmp_root|VolGroup00/LogVol00|g' /etc/default/grub
 grub2-mkconfig -o /boot/grub2/grub.cfg
 EOF
-
+echo -e "${WHITE}════════ After Rebooting The PC, Run /vagrant/lvm_step3.sh${NORMAL}"
+echo "Reboot BOX"
+sudo reboot
