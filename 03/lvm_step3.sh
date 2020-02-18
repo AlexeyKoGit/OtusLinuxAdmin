@@ -19,4 +19,4 @@ done
 #sudo vgrename -v vg_tmp_root fs_lab
 #sudo lvrename /dev/fs_lab/lv_tmp_root /dev/fs_lab/lv_zfs
 
-#udo lvs
+*#udo lvs
