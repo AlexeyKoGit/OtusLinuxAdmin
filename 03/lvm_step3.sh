@@ -28,9 +28,12 @@ rm /home/vagrant/$i.txt
 done
 echo "After"
 ls -X /home/vagrant/
-sudo sudo mount -o remount,rw /dev/vg_home/lv_home /home
+#sudo sudo mount -o remount,rw /dev/vg_home/lv_home /home
 #sudo vgrename -v vg_tmp_root fs_lab
 #sudo lvrename /dev/fs_lab/lv_tmp_root /dev/fs_lab/lv_zfs
 #lvconvert --merge /dev/vg_home/s_shot_lv_home
 #sudo mount -o remount,rw /dev/vg_home/lv_home /home
 #sudo lvs
+echo -e "${WHITE}════════ After Rebooting The PC, Run /vagrant/lvm_step4.sh${NORMAL}"
+echo "Reboot BOX"
+sudo reboot
