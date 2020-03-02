@@ -1,5 +1,5 @@
 #!/bin/sh
-v_tmp=`sudo yum -y install mc 2>/dev/null`
+#v_tmp=`sudo yum -y install mc 2>/dev/null`
 #ini
 WHITE='\033[1;97;40m'
 RED='\033[1;91;40m'
