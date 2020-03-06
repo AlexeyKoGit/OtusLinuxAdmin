@@ -39,29 +39,49 @@ URLs:
 * **VirtualBox**
 * **Vagrant**
 #### 2. Определяем необходимую структуру LVM
-Посмотрим какие диски имеются в системе
+Посмотрим какие диски имеются в системе.
 ```bash
-$ lsblk
-NAME                    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-sda                       8:0    0   40G  0 disk
-├─sda1                    8:1    0    1M  0 part
-├─sda2                    8:2    0    1G  0 part /boot
-└─sda3                    8:3    0   39G  0 part
-  ├─VolGroup00-LogVol00 253:0    0 37.5G  0 lvm  /
-  └─VolGroup00-LogVol01 253:1    0  1.5G  0 lvm  [SWAP]
-sdb                       8:16   0   10G  0 disk
-sdc                       8:32   0    2G  0 disk
-sdd                       8:48   0    1G  0 disk
-sde                       8:64   0    1G  0 disk
+$ lsblk --output NAME,FSTYPE,MAJ:MIN,RM,SIZE,RO,TYPE,UUID,MOUNTPOINT
+NAME                    FSTYPE      MAJ:MIN RM  SIZE RO TYPE UUID                                   MOUNTPOINT
+sda                                   8:0    0   40G  0 disk
+├─sda1                                8:1    0    1M  0 part
+├─sda2                  xfs           8:2    0    1G  0 part 570897ca-e759-4c81-90cf-389da6eee4cc   /boot
+└─sda3                  LVM2_member   8:3    0   39G  0 part vrrtbx-g480-HcJI-5wLn-4aOf-Olld-rC03AY
+  ├─VolGroup00-LogVol00 xfs         253:0    0 37.5G  0 lvm  b60e9498-0baa-4d9f-90aa-069048217fee   /
+  └─VolGroup00-LogVol01 swap        253:1    0  1.5G  0 lvm  c39c5bed-f37c-4263-bee8-aeb6a6659d7b   [SWAP]
+sdb                                   8:16   0   10G  0 disk
+sdc                                   8:32   0    2G  0 disk
+sdd                                   8:48   0    1G  0 disk
+sde                                   8:64   0    1G  0 disk
+                       8:64   0    1G  0 disk
 ```
+
 Запланируем следующую структуру:
 - диск **sdb**, **10G** - отведем под временный "**/**" (**tmp_root**)
 - диск **scd**, **2G** - отведем под "**/home**" (**snapshot**)
 - диски **sdd**, **sde** - отведем под "**/var**" (**mirror**)
-
-
-
-
-
+#### 3. Создаем объекты LVM
+Добавляем диски.
+```bash
+$ sudo pvcreate /dev/sdb
+  Physical volume "/dev/sdb" successfully created.
+$ sudo pvcreate /dev/sdc
+  Physical volume "/dev/sdc" successfully created.
+$ sudo pvcreate /dev/sdd
+  Physical volume "/dev/sdd" successfully created.
+$ sudo pvcreate /dev/sde
+  Physical volume "/dev/sde" successfully created.
+```
+Смотрим что получилось.
+```bash
+$ sudo pvs
+  PV         VG         Fmt  Attr PSize   PFree
+  /dev/sda3  VolGroup00 lvm2 a--  <38.97g     0
+  /dev/sdb              lvm2 ---   10.00g 10.00g
+  /dev/sdc              lvm2 ---    2.00g  2.00g
+  /dev/sdd              lvm2 ---    1.00g  1.00g
+  /dev/sde              lvm2 ---    1.00g  1.00g
+```
+Создаем группы LVM с Physical volume разделами.
 
 
