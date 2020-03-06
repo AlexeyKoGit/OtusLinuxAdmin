@@ -55,21 +55,18 @@ sdd                                   8:48   0    1G  0 disk
 sde                                   8:64   0    1G  0 disk
                        8:64   0    1G  0 disk
 ```
-
+Видим что корневой каталог "**root**" "**/**" имеет файловую систему типа **xfs**, данная файловая система не позволят уменьшить размер до **8G**, как необходимо по условиям задания, для решения задания потребуется пересоздать раздел, а данные временно перенести на другой раздел.   
 Запланируем следующую структуру:
-- диск **sdb**, **10G** - отведем под временный "**/**" (**tmp_root**)
-- диск **scd**, **2G** - отведем под "**/home**" (**snapshot**)
-- диски **sdd**, **sde** - отведем под "**/var**" (**mirror**)
+- диск **sdb**, **10G** - отведем под временный корневой каталог "**/**" (tmp_root)
+- диск **scd**, **2G** - отведем под "**/home**" (snapshot)
+- диски **sdd**, **sde** - отведем под "**/var**" (mirror)
 #### 3. Создаем объекты LVM
 Добавляем диски.
 ```bash
-$ sudo pvcreate /dev/sdb
+$ sudo pvcreate /dev/sd[bcde]
   Physical volume "/dev/sdb" successfully created.
-$ sudo pvcreate /dev/sdc
   Physical volume "/dev/sdc" successfully created.
-$ sudo pvcreate /dev/sdd
   Physical volume "/dev/sdd" successfully created.
-$ sudo pvcreate /dev/sde
   Physical volume "/dev/sde" successfully created.
 ```
 Смотрим что получилось.
@@ -83,5 +80,29 @@ $ sudo pvs
   /dev/sde              lvm2 ---    1.00g  1.00g
 ```
 Создаем группы LVM с Physical volume разделами.
+```bash
+$ sudo vgcreate vg_tmp_root /dev/sdb
+  Volume group "vg_tmp_root" successfully created
+$ sudo vgcreate vg_home /dev/sdc
+  Volume group "vg_home" successfully created
+$ sudo vgcreate vg_var /dev/sd[de]
+  Volume group "vg_var" successfully created
+```
+Смотрим что получилось.
+```bash
+$ sudo vgs
+  VG          #PV #LV #SN Attr   VSize   VFree
+  VolGroup00    1   2   0 wz--n- <38.97g      0
+  vg_home       1   0   0 wz--n-  <2.00g  <2.00g
+  vg_tmp_root   1   0   0 wz--n- <10.00g <10.00g
+  vg_var        2   0   0 wz--n-   1.99g   1.99g
+$ sudo pvs
+  PV         VG          Fmt  Attr PSize    PFree
+  /dev/sda3  VolGroup00  lvm2 a--   <38.97g       0
+  /dev/sdb   vg_tmp_root lvm2 a--   <10.00g  <10.00g
+  /dev/sdc   vg_home     lvm2 a--    <2.00g   <2.00g
+  /dev/sdd   vg_var      lvm2 a--  1020.00m 1020.00m
+  /dev/sde   vg_var      lvm2 a--  1020.00m 1020.00m
+```
 
 
