@@ -104,5 +104,49 @@ $ sudo pvs
   /dev/sdd   vg_var      lvm2 a--  1020.00m 1020.00m
   /dev/sde   vg_var      lvm2 a--  1020.00m 1020.00m
 ```
+Создаем LVM Logical Volumes.
+Раздел для временного корневого каталога "**/**" (tmp_root).
+```bash
+$ sudo lvcreate -n lv_tmp_root -l +100%FREE /dev/vg_tmp_root
+  Logical volume "lv_tmp_root" created.
+```
+Раздел для директории "**/home**" (snapshot), выделим **50%**, так-как остальные **50%** будем использовать под **snapshot**.
+```bash
+$ sudo lvcreate -n lv_home -l +50%FREE /dev/vg_home
+  Logical volume "lv_home" created.
+```
+Попробуем создать **snapshot**.
+```bash
+$ sudo lvcreate -s -n s_shot_lv_home -l +100%FREE /dev/vg_home/lv_home
+  Logical volume "s_shot_lv_home" created.
+```
+Раздел для "**/var**" (mirror)
+```bash
+$ sudo lvcreate -m1 -n mirror_lv_var -l +100%FREE /dev/vg_var
+  Logical volume "mirror_lv_var" created.
+```
+Смотрим что получилось.
+```bash
+sudo lvs
+  LV             VG          Attr       LSize    Pool Origin  Data%  Meta%  Move Log Cpy%Sync Convert
+  LogVol00       VolGroup00  -wi-ao----  <37.47g
+  LogVol01       VolGroup00  -wi-ao----    1.50g
+  lv_home        vg_home     owi-a-s--- 1020.00m
+  s_shot_lv_home vg_home     swi-a-s---    1.00g      lv_home 0.00
+  lv_tmp_root    vg_tmp_root -wi-a-----  <10.00g
+  mirror_lv_var  vg_var      rwi-a-r--- 1016.00m                                     100.00
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
