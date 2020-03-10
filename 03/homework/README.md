@@ -37,9 +37,9 @@ URLs:
 #### 1. Устанавливаем необходимое ПО
 * **GIT**
 * **VirtualBox**
-* **Vagrant**
-#### 2. Создаем LVM
-Посмотрим какие диски имеются в системе.
+* **Vagrant  2.2.6**
+#### 2. Создаем LVM разделы
+##### 2.1 Cмотрим какие диски имеются в системе.
 ```bash
 $ lsblk --output NAME,FSTYPE,MAJ:MIN,RM,SIZE,RO,TYPE,UUID,MOUNTPOINT
 NAME                    FSTYPE      MAJ:MIN RM  SIZE RO TYPE UUID                                   MOUNTPOINT
@@ -56,11 +56,11 @@ sde                                   8:64   0    1G  0 disk
                        8:64   0    1G  0 disk
 ```
 Видим что корневой каталог "**root**" "**/**" имеет файловую систему типа **xfs**, данная файловая система не позволят уменьшить размер до **8G**, как необходимо по условиям задания, для решения задания потребуется пересоздать раздел, а данные временно перенести на другой раздел. 
-##### 3.1 Определяем необходимую структуру LVM
+##### 2.2 Определяем необходимую структуру LVM
 - диск **sdb**, **10G** - отведем под временный корневой каталог "**/**" (tmp_root)
 - диск **scd**, **2G** - отведем под "**/home**" (snapshot)
 - диски **sdd**, **sde** - отведем под "**/var**" (mirror)
-##### 3.2 Создаем объекты LVM
+##### 2.3 Создаем объекты LVM
 Добавляем диски.
 ```bash
 $ sudo pvcreate /dev/sd[bcde]
@@ -138,13 +138,120 @@ sudo lvs
 ```
 Видим, что **snapshot** равен 100% диска с которого он снят а mirror 50% реального объема двух дисков, размеры имеют погрешность с учетом рабочих данных которые там хранит **LVM**.  
 Мы добились нужной нам структуры **LVM**.  
-##### 3.3 Создадим файловую систему на полученных разделах.
+##### 2.4 Создадим файловую систему на полученных разделах.
+```bash
+$ sudo mkfs.xfs /dev/vg_tmp_root/lv_tmp_root
+meta-data=/dev/vg_tmp_root/lv_tmp_root isize=512    agcount=4, agsize=655104 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=2620416, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
 
 
+$ sudo mkfs.ext4 /dev/vg_home/lv_home
+mke2fs 1.42.9 (28-Dec-2013)
+Filesystem label=
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=0 blocks, Stripe width=0 blocks
+65280 inodes, 261120 blocks
+13056 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=268435456
+8 block groups
+32768 blocks per group, 32768 fragments per group
+8160 inodes per group
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: done
 
 
+$ sudo mkfs.ext4 /dev/vg_home/s_shot_lv_home
+mke2fs 1.42.9 (28-Dec-2013)
+Filesystem label=
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=0 blocks, Stripe width=0 blocks
+65280 inodes, 261120 blocks
+13056 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=268435456
+8 block groups
+32768 blocks per group, 32768 fragments per group
+8160 inodes per group
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: done
 
 
+$ sudo mkfs.ext4 /dev/vg_var/mirror_lv_var
+mke2fs 1.42.9 (28-Dec-2013)
+Filesystem label=
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=0 blocks, Stripe width=0 blocks
+65024 inodes, 260096 blocks
+13004 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=266338304
+8 block groups
+32768 blocks per group, 32768 fragments per group
+8128 inodes per group
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: done
+```
+Проверим что получилось.
+```bash
+$ sudo blkid | grep -P '(xfs|ext4)' | grep '/vg_'
+/dev/mapper/vg_home-lv_home: UUID="2801146a-3b78-4976-bfda-a8c051d52cca" TYPE="ext4"
+/dev/mapper/vg_home-s_shot_lv_home: UUID="6594e62c-6b20-4346-9d78-d09f594140a7" TYPE="ext4"
+/dev/mapper/vg_tmp_root-lv_tmp_root: UUID="aff483ef-602c-421e-b063-1b0fb34e65fd" TYPE="xfs"
+/dev/mapper/vg_var-mirror_lv_var_rimage_0: UUID="4658fba2-6740-41c6-89a3-636e77507abe" TYPE="ext4"
+/dev/mapper/vg_var-mirror_lv_var_rimage_1: UUID="4658fba2-6740-41c6-89a3-636e77507abe" TYPE="ext4"
+/dev/mapper/vg_var-mirror_lv_var: UUID="4658fba2-6740-41c6-89a3-636e77507abe" TYPE="ext4"
+```
+#### 3 Переносим данные на новые LVM разделы.
+##### 3.1 Создаем директории для монтирования
+```bash
+$ sudo mkdir /mnt/v_tmp_root
+$ sudo mkdir /mnt/v_home
+$ sudo mkdir /mnt/v_var
+$ ls -l /mnt/
+total 0
+drwxr-xr-x. 2 root root 6 Mar 10 23:53 v_home
+drwxr-xr-x. 2 root root 6 Mar 10 23:53 v_tmp_root
+drwxr-xr-x. 2 root root 6 Mar 10 23:53 v_var
+```
+##### 3.2 Монтируем разделы
+```bash
+$ sudo mount /dev/vg_tmp_root/lv_tmp_root/ /mnt/v_tmp_root
+$ sudo mount /dev/vg_home/lv_home/ /mnt/v_home
+$ sudo mount /dev/vg_var/mirror_lv_var/ /mnt/v_var
+$ mount | grep '/vg_'
+/dev/mapper/vg_tmp_root-lv_tmp_root on /mnt/v_tmp_root type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
+/dev/mapper/vg_home-lv_home on /mnt/v_home type ext4 (rw,relatime,seclabel,data=ordered)
+/dev/mapper/vg_var-mirror_lv_var on /mnt/v_var type ext4 (rw,relatime,seclabel,data=ordered)
+```
 
 
 
