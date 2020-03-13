@@ -277,7 +277,32 @@ $ sudo cp -dpRxf --preserve=context /var/* /mnt/v_var/
 UUID=570897ca-e759-4c81-90cf-389da6eee4cc /boot                   xfs     defaults        0 0
 /dev/mapper/VolGroup00-LogVol01 swap                    swap    defaults        0 0
 ```
+Смотрим **UUID** для **/home** и **/var**
+```bash
+$ lsblk --output NAME,UUID | grep 'vg_home-lv_home' | grep -oP '[-\w]+$'
+2801146a-3b78-4976-bfda-a8c051d52cca
+$ lsblk --output NAME,UUID | grep 'vg_var-mirror_lv_var' | grep -oP -m1 '[-\w]+$'
+4658fba2-6740-41c6-89a3-636e77507abe
+```
+Вносим изменения в **fstab** согласно полученным **UUID** и нового раздела lv_tmp_root.  
+Получиться должно следующее:
+```bash
+$ cat /mnt/v_tmp_root/etc/fstab
 
+#
+# /etc/fstab
+# Created by anaconda on Sat May 12 18:50:26 2018
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+/dev/mapper/vg_tmp_root-lv_tmp_root /                       xfs     defaults        0 0
+UUID=570897ca-e759-4c81-90cf-389da6eee4cc /boot                   xfs     defaults        0 0
+/dev/mapper/VolGroup00-LogVol01 swap                    swap    defaults        0 0
+UUID=2801146a-3b78-4976-bfda-a8c051d52cca /home                   ext4     defaults        0 0
+UUID=4658fba2-6740-41c6-89a3-636e77507abe /var                   ext4     defaults        0 0
+
+```
 
 
 
