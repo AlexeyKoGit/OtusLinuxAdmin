@@ -252,9 +252,31 @@ $ mount | grep '/vg_'
 /dev/mapper/vg_home-lv_home on /mnt/v_home type ext4 (rw,relatime,seclabel,data=ordered)
 /dev/mapper/vg_var-mirror_lv_var on /mnt/v_var type ext4 (rw,relatime,seclabel,data=ordered)
 ```
+##### 3.3 Переносим данные
+```bash
+$ sudo cp -dpRxf --preserve=context / /mnt/v_tmp_root/
+$ sudo rm -r /mnt/v_tmp_root/home/*
+$ sudo rm -r /mnt/v_tmp_root/var/*
+$ sudo cp -dpRxf --preserve=context /home/* /mnt/v_home/
+$ sudo cp -dpRxf --preserve=context /var/* /mnt/v_var/
+```
+#### 4 Меняем корневой раздел загрузки и монтирование разделов.
+##### 4.1 Вносим изменения в fstab
+Изначальное состояние
+```bash
+]$ cat /mnt/v_tmp_root/etc/fstab
 
-
-
+#
+# /etc/fstab
+# Created by anaconda on Sat May 12 18:50:26 2018
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+/dev/mapper/VolGroup00-LogVol00 /                       xfs     defaults        0 0
+UUID=570897ca-e759-4c81-90cf-389da6eee4cc /boot                   xfs     defaults        0 0
+/dev/mapper/VolGroup00-LogVol01 swap                    swap    defaults        0 0
+```
 
 
 
