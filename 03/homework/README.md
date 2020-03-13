@@ -356,4 +356,5 @@ exit
 [vagrant@lvm ~]$ sudo reboot
 ```
 <code>nano bash</code>.
-This **word** is bold. This <em>word</em> is italic.
+This **word** is bold. This <em>word</em> is italic.  
+[Deployment steps](##Задание)
