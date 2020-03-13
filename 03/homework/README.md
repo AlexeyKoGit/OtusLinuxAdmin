@@ -301,9 +301,33 @@ UUID=570897ca-e759-4c81-90cf-389da6eee4cc /boot                   xfs     defaul
 /dev/mapper/VolGroup00-LogVol01 swap                    swap    defaults        0 0
 UUID=2801146a-3b78-4976-bfda-a8c051d52cca /home                   ext4     defaults        0 0
 UUID=4658fba2-6740-41c6-89a3-636e77507abe /var                   ext4     defaults        0 0
+```
+##### 4.2 Меняем конфигурацию grub
+Изначальное состояние
+```bash
+$ cat /mnt/v_tmp_root/etc/fstab
+
+#
+# /etc/fstab
+# Created by anaconda on Sat May 12 18:50:26 2018
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+/dev/mapper/vg_tmp_root-lv_tmp_root /                       xfs     defaults        0 0
+UUID=570897ca-e759-4c81-90cf-389da6eee4cc /boot                   xfs     defaults        0 0
+/dev/mapper/VolGroup00-LogVol01 swap                    swap    defaults        0 0
+UUID=2801146a-3b78-4976-bfda-a8c051d52cca /home                   ext4     defaults        0 0
+UUID=4658fba2-6740-41c6-89a3-636e77507abe /var                   ext4     defaults        0 0
+[vagrant@lvm ~]$ cat /mnt/v_tmp_root/etc/default/grub
+GRUB_TIMEOUT=1
+GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
+GRUB_DEFAULT=saved
+GRUB_DISABLE_SUBMENU=true
+GRUB_TERMINAL_OUTPUT="console"
+GRUB_CMDLINE_LINUX="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 elevator=noop crashkernel=auto rd.lvm.lv=VolGroup00/LogVol00 rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet"
+GRUB_DISABLE_RECOVERY="true"
 
 ```
-
-
 
 
