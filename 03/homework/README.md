@@ -314,7 +314,7 @@ GRUB_TERMINAL_OUTPUT="console"
 GRUB_CMDLINE_LINUX="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 elevator=noop crashkernel=auto rd.lvm.lv=VolGroup00/LogVol00 rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet"
 GRUB_DISABLE_RECOVERY="true"
 ```
-
+Меняем **rd.lvm.lv=VolGroup00/LogVol00** на **rd.lvm.lv=vg_tmp_root/lv_tmp_root**
 ```bash
 $ cat /mnt/v_tmp_root/etc/default/grub
 GRUB_TIMEOUT=1
@@ -325,4 +325,29 @@ GRUB_TERMINAL_OUTPUT="console"
 GRUB_CMDLINE_LINUX="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 elevator=noop crashkernel=auto rd.lvm.lv=vg_tmp_root/lv_tmp_root rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet"
 GRUB_DISABLE_RECOVERY="true"
 ```
-
+#### 5 Создаем новую конфигурацию GRUB
+Монтируем необходимое окружение
+````bash
+$ sudo mount --bind /proc /mnt/v_tmp_root/proc
+$ sudo mount --bind /dev /mnt/v_tmp_root/dev
+$ sudo mount --bind /sys /mnt/v_tmp_root/sys
+$ sudo mount --bind /run /mnt/v_tmp_root/run
+$ sudo mount --bind /boot /mnt/v_tmp_root/boot
+$ sudo mount --bind /var /mnt/v_tmp_root/var
+````
+Делаем **chroot** и создаем конфигурацию **GRUB**
+```bash
+$ sudo chroot /mnt/v_tmp_root
+#
+# grub2-mkconfig -o /boot/grub2/grub.cfg
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-3.10.0-862.2.3.el7.x86_64
+Found initrd image: /boot/initramfs-3.10.0-862.2.3.el7.x86_64.img
+done
+```
+Выходим из **chroot** и перезагружаем **box**
+```bash
+# exit
+exit
+[vagrant@lvm ~]$ sudo reboot
+```
