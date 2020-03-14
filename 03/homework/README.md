@@ -9,7 +9,10 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.1 LVM разделы](#s11)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.2  Создаем объекты LVM](#s12)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.3  Создадим файловую систему на полученных разделах](#s13)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.4 Переносим данные на новые LVM разделы](#s14)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.4 Переносим данные на новые LVM разделы](#s14)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.5 Вносим изменения в fstab](#s15)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.6 Меняем конфигурацию grub](#s16)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.7 Создаем новую конфигурацию GRUB](#s17)
 
 
 ### <a name="zadanie"></a> Задание
@@ -275,8 +278,7 @@ $ sudo rm -r /mnt/v_tmp_root/var/*
 $ sudo cp -dpRxf --preserve=context /home/* /mnt/v_home/
 $ sudo cp -dpRxf --preserve=context /var/* /mnt/v_var/
 ```
-#### 4 Меняем корневой раздел загрузки и монтирование разделов.
-##### 4.1 Вносим изменения в fstab
+### <a name="s15"> S1.5 Вносим изменения в fstab
 Изначальное состояние
 ```bash
 ]$ cat /mnt/v_tmp_root/etc/fstab
@@ -317,7 +319,7 @@ UUID=570897ca-e759-4c81-90cf-389da6eee4cc /boot                   xfs     defaul
 UUID=2801146a-3b78-4976-bfda-a8c051d52cca /home                   ext4     defaults        0 0
 UUID=4658fba2-6740-41c6-89a3-636e77507abe /var                   ext4     defaults        0 0
 ```
-##### 4.2 Меняем конфигурацию grub
+### <a name="s16"> S1.6 Меняем конфигурацию grub
 Изначальное состояние
 ```bash
 $ cat /mnt/v_tmp_root/etc/default/grub
@@ -340,7 +342,7 @@ GRUB_TERMINAL_OUTPUT="console"
 GRUB_CMDLINE_LINUX="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 elevator=noop crashkernel=auto rd.lvm.lv=vg_tmp_root/lv_tmp_root rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet"
 GRUB_DISABLE_RECOVERY="true"
 ```
-#### 5 Создаем новую конфигурацию GRUB
+### <a name="s17"> Создаем новую конфигурацию GRUB
 Монтируем необходимое окружение
 ````bash
 $ sudo mount --bind /proc /mnt/v_tmp_root/proc
