@@ -7,7 +7,7 @@ YELLOW='\033[1;93;40m'
 GREEN='\033[1;92;40m'
 NORMAL='\033[0m'
 #start
-label="${WHITE}║        LVM STEP 1           ║${NORMAL}"
+label="${WHITE}║        ZFX STEP 1           ║${NORMAL}"
 echo -e "${WHITE}╔═════════════════════════════╗${NORMAL}\n${WHITE}$label${NORMAL}\n${WHITE}╚═════════════════════════════╝${NORMAL}"
 lsblk
 echo -e "${WHITE}════════ Install ZFS${NORMAL}"
@@ -23,3 +23,7 @@ config.set('zfs-kmod', 'enabled', 1);
 with open('/etc/yum.repos.d/zfs.repo', 'wb') as configfile: config.write(configfile)"
 echo " Please wait for the installation ZFS-KMOD"	
 sudo yum -y install zfs | grep -Poz '((?s)([=]{80}).+[=]{80}.(?-s)Install.+$)|(^Running transaction$)|(Installing.+$)'
+echo -e "${WHITE}════════ Modules Test${NORMAL}"
+sudo modprobe zfs
+sudo lsmod | grep 'zfs'
+echo -e "\nplease run next sh file zfs_step2.sh"
