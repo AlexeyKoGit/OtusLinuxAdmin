@@ -6,7 +6,11 @@
 1\. [Устанавливаем необходимое ПО](#unpo)  
 2\. [Шаги выполнения задания](#steps)  
 &nbsp;&nbsp;&nbsp;&nbsp;[Step 1.](#step1)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.1 Создаем LVM разделы](#s11)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.1 LVM разделы](#s11)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.2  Создаем объекты LVM](#s12)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.3  Создадим файловую систему на полученных разделах](#s13)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.4 Переносим данные на новые LVM разделы](#s14)
+
 
 ### <a name="zadanie"></a> Задание
 Работа с LVM
@@ -49,7 +53,7 @@ URLs:
 ### 2. <a name="steps"> Шаги выполнения задания 
 Разобьём выполнение работы на шаги (**step**), каждый шаг будет завершаться перезагрузкой **BOX**-а.
 ### <a name="step1"> Step 1.
-### <a name="s11"> S1.1 Создаем LVM разделы
+### <a name="s11"> S1.1 LVM разделы
 Cмотрим какие диски имеются в системе.
 ```bash
 $ lsblk --output NAME,FSTYPE,MAJ:MIN,RM,SIZE,RO,TYPE,UUID,MOUNTPOINT
@@ -71,7 +75,7 @@ sde                                   8:64   0    1G  0 disk
 - диск **sdb**, **10G** - отведем под временный корневой каталог "**/**" (tmp_root)
 - диск **scd**, **2G** - отведем под "**/home**" (snapshot)
 - диски **sdd**, **sde** - отведем под "**/var**" (mirror)
-##### 2.3 Создаем объекты LVM
+### <a name="s12"> S1.2  Создаем объекты LVM
 Добавляем диски.
 ```bash
 $ sudo pvcreate /dev/sd[bcde]
@@ -149,7 +153,7 @@ sudo lvs
 ```
 Видим, что **snapshot** равен 100% диска с которого он снят а mirror 50% реального объема двух дисков, размеры имеют погрешность с учетом рабочих данных которые там хранит **LVM**.  
 Мы добились нужной нам структуры **LVM**.  
-##### 2.4 Создадим файловую систему на полученных разделах.
+### <a name="s13"> S1.3 Создадим файловую систему на полученных разделах.
 ```bash
 $ sudo mkfs.xfs /dev/vg_tmp_root/lv_tmp_root
 meta-data=/dev/vg_tmp_root/lv_tmp_root isize=512    agcount=4, agsize=655104 blks
@@ -241,8 +245,8 @@ $ sudo blkid | grep -P '(xfs|ext4)' | grep '/vg_'
 /dev/mapper/vg_var-mirror_lv_var_rimage_1: UUID="4658fba2-6740-41c6-89a3-636e77507abe" TYPE="ext4"
 /dev/mapper/vg_var-mirror_lv_var: UUID="4658fba2-6740-41c6-89a3-636e77507abe" TYPE="ext4"
 ```
-#### 3 Переносим данные на новые LVM разделы.
-##### 3.1 Создаем директории для монтирования
+### <a name="s14"> S1.4 Переносим данные на новые LVM разделы.
+Создаем директории для монтирования
 ```bash
 $ sudo mkdir /mnt/v_tmp_root
 $ sudo mkdir /mnt/v_home
@@ -253,7 +257,7 @@ drwxr-xr-x. 2 root root 6 Mar 10 23:53 v_home
 drwxr-xr-x. 2 root root 6 Mar 10 23:53 v_tmp_root
 drwxr-xr-x. 2 root root 6 Mar 10 23:53 v_var
 ```
-##### 3.2 Монтируем разделы
+Монтируем разделы
 ```bash
 $ sudo mount /dev/vg_tmp_root/lv_tmp_root/ /mnt/v_tmp_root
 $ sudo mount /dev/vg_home/lv_home/ /mnt/v_home
@@ -263,7 +267,7 @@ $ mount | grep '/vg_'
 /dev/mapper/vg_home-lv_home on /mnt/v_home type ext4 (rw,relatime,seclabel,data=ordered)
 /dev/mapper/vg_var-mirror_lv_var on /mnt/v_var type ext4 (rw,relatime,seclabel,data=ordered)
 ```
-##### 3.3 Переносим данные
+Переносим данные
 ```bash
 $ sudo cp -dpRxf --preserve=context / /mnt/v_tmp_root/
 $ sudo rm -r /mnt/v_tmp_root/home/*
