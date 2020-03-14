@@ -19,7 +19,9 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.2 Создаем файловую систему XFS](#s22)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.3 Переносим данные на созданный 8G раздел](#s23)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.4 Меняем fstab](#s24)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.5 Перезапишем GRUB](#s25)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.5 Перезапишем GRUB](#s25)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.6 Выходим и перезагружаем BOX](#s26)
+&nbsp;&nbsp;&nbsp;&nbsp;[Step 3.](#step3)
 
 
 ### <a name="zadanie"></a> Задание
@@ -351,14 +353,14 @@ GRUB_DISABLE_RECOVERY="true"
 ```
 ### <a name="s17"> S1.7 Перезапишем GRUB
 Монтируем необходимое окружение
-````bash
+```bash
 $ sudo mount --bind /proc /mnt/v_tmp_root/proc
 $ sudo mount --bind /dev /mnt/v_tmp_root/dev
 $ sudo mount --bind /sys /mnt/v_tmp_root/sys
 $ sudo mount --bind /run /mnt/v_tmp_root/run
 $ sudo mount --bind /boot /mnt/v_tmp_root/boot
 $ sudo mount --bind /var /mnt/v_tmp_root/var
-````
+```
 Делаем **chroot** и создаем конфигурацию **GRUB**
 ```bash
 $ sudo chroot /mnt/v_tmp_root
@@ -450,3 +452,36 @@ UUID=2801146a-3b78-4976-bfda-a8c051d52cca /home                   ext4     defau
 UUID=4658fba2-6740-41c6-89a3-636e77507abe /var                   ext4     defaults        0 0
 ```
 ### <a name="s25"> S2.5 Перезапишем GRUB
+Монтируем необходимое окружение
+````bash
+$ sudo mount --bind /proc /mnt/v_tmp_root/proc
+$ sudo mount --bind /dev /mnt/v_tmp_root/dev
+$ sudo mount --bind /sys /mnt/v_tmp_root/sys
+$ sudo mount --bind /run /mnt/v_tmp_root/run
+$ sudo mount --bind /boot /mnt/v_tmp_root/boot
+$ sudo mount --bind /var /mnt/v_tmp_root/var
+````
+Делаем **chroot** и создаем конфигурацию **GRUB**
+```bash
+$ sudo chroot /mnt
+```
+Правим **/etc/default/grub**, меняем **vg_tmp_root/lv_tmp_root** на **VolGroup00/LogVol00**  
+Должно получиться:
+```bash
+# cat /etc/default/grub
+GRUB_TIMEOUT=1
+GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
+GRUB_DEFAULT=saved
+GRUB_DISABLE_SUBMENU=true
+GRUB_TERMINAL_OUTPUT="console"
+GRUB_CMDLINE_LINUX="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 elevator=noop crashkernel=auto rd.lvm.lv=VolGroup00/LogVol00 rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet"
+GRUB_DISABLE_RECOVERY="true"
+```
+### <a name="s26"> S2.6 Выходим и перезагружаем BOX
+Выходим из **chroot** и перезагружаем **box**
+```bash
+# exit
+exit
+$ sudo reboot
+```
+### <a name="step3"> Step 3.
