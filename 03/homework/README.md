@@ -20,9 +20,11 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.3 Переносим данные на созданный 8G раздел](#s23)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.4 Меняем fstab](#s24)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.5 Перезапишем GRUB](#s25)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.6 Выходим и перезагружаем BOX](#s26)
-&nbsp;&nbsp;&nbsp;&nbsp;[Step 3.](#step3)
-
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.6 Выходим и перезагружаем BOX](#s26)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Step 3.](#step3)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.1 Генерируем файлы](#s31)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.2 Создаем snapshot](#s32)
+ 
 
 ### <a name="zadanie"></a> Задание
 Работа с LVM
@@ -485,3 +487,31 @@ exit
 $ sudo reboot
 ```
 ### <a name="step3"> Step 3.
+Проверяем работу **snapshot LVM**
+### <a name="s31"> S3.1 Генерируем файлы
+Генерируем файлы в /home/vagrant
+```bash
+cd /home/vagrant
+for (( i=1; i <= 15; i++ )); do echo "$RANDOM" >> "$i".txt; done
+```
+Смотрим что получилось
+```bash
+$ ll
+total 60
+-rw-rw-r--. 1 vagrant vagrant  6 Mar 14 17:31 10.txt
+-rw-rw-r--. 1 vagrant vagrant  6 Mar 14 17:31 11.txt
+-rw-rw-r--. 1 vagrant vagrant  4 Mar 14 17:31 12.txt
+-rw-rw-r--. 1 vagrant vagrant  5 Mar 14 17:31 13.txt
+-rw-rw-r--. 1 vagrant vagrant  6 Mar 14 17:31 14.txt
+-rw-rw-r--. 1 vagrant vagrant  5 Mar 14 17:31 15.txt
+-rw-rw-r--. 1 vagrant vagrant 12 Mar 14 17:31 1.txt
+-rw-rw-r--. 1 vagrant vagrant  6 Mar 14 17:31 2.txt
+-rw-rw-r--. 1 vagrant vagrant  5 Mar 14 17:31 3.txt
+-rw-rw-r--. 1 vagrant vagrant  6 Mar 14 17:31 4.txt
+-rw-rw-r--. 1 vagrant vagrant  6 Mar 14 17:31 5.txt
+-rw-rw-r--. 1 vagrant vagrant  5 Mar 14 17:31 6.txt
+-rw-rw-r--. 1 vagrant vagrant  6 Mar 14 17:31 7.txt
+-rw-rw-r--. 1 vagrant vagrant  6 Mar 14 17:31 8.txt
+-rw-rw-r--. 1 vagrant vagrant  6 Mar 14 17:31 9.txt
+```
+### <a name="s32"> S3.2 Создаем snapshot
