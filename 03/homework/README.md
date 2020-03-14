@@ -5,7 +5,9 @@
 [Порядок выполнения задания](#pvz)  
 1\. [Устанавливаем необходимое ПО](#unpo)  
 2\. [Шаги выполнения задания](#steps)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Step 1.](#step1)
+&nbsp;&nbsp;&nbsp;&nbsp;[Step 1.](#step1)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.1 Создаем LVM разделы](#s11)
+
 ### <a name="zadanie"></a> Задание
 Работа с LVM
 на имеющемся образе
@@ -47,8 +49,8 @@ URLs:
 ### 2. <a name="steps"> Шаги выполнения задания 
 Разобьём выполнение работы на шаги (**step**), каждый шаг будет завершаться перезагрузкой **BOX**-а.
 ### <a name="step1"> Step 1.
-##### S1.1 Создаем LVM разделы
-**Cмотрим какие диски имеются в системе.**
+### <a name="s11"> S1.1 Создаем LVM разделы
+Cмотрим какие диски имеются в системе.
 ```bash
 $ lsblk --output NAME,FSTYPE,MAJ:MIN,RM,SIZE,RO,TYPE,UUID,MOUNTPOINT
 NAME                    FSTYPE      MAJ:MIN RM  SIZE RO TYPE UUID                                   MOUNTPOINT
