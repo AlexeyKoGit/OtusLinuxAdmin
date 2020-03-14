@@ -25,7 +25,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.1 Генерируем файлы](#s31)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.2 Создаем snapshot](#s32)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.3 Восстанавливаем данные из snapshot-а](#s33)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.4 Результат](#s34)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.4 перезагружаем BOX](#s34)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.5 Результат](#s35)
 
 
 ### <a name="zadanie"></a> Задание
@@ -557,11 +558,11 @@ Do you really want to remove active logical volume vg_home/s_shot_lv_home? [y/n]
 $ sudo lvcreate -s -n s_shot_lv_home -l +100%FREE /dev/vg_home/lv_home
   Logical volume "s_shot_lv_home" created.
 ```
-Удалим часть файлов 
+Удалим часть файлов.
 ```bash
 $ for (( i=5; i <= 10; i++ )); do rm /home/vagrant/"$i".txt; done
 ```
-Смотрим что получилось
+Смотрим что получилось.
 ```bash
 $ ll
 total 36
@@ -581,12 +582,13 @@ $ sudo lvconvert --merge /dev/vg_home/s_shot_lv_home
   Delaying merge since origin is open.
   Merging of snapshot vg_home/s_shot_lv_home will occur on next activation of vg_home/lv_home.
 ```
+### <a name="s34"> S3.4 перезагружаем BOX
 Для вступления изменений в силу необходимо перезагрузить **box**
 ```bash
 $ sudo reboot
 ```
-### <a name="s34"> S3.4 Результат
-Проверяем файлы
+### <a name="s35"> S3.5 Результат
+Проверяем файлы.
 ```bash
 $ cd /home/vagrant
 $ ll
@@ -607,4 +609,4 @@ total 60
 -rw-rw-r--. 1 vagrant vagrant  6 Mar 14 17:31 8.txt
 -rw-rw-r--. 1 vagrant vagrant  6 Mar 14 17:31 9.txt
 ```
-Как видим файлы восстановились
+Как видим файлы восстановились.
