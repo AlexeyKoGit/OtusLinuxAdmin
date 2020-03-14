@@ -14,7 +14,12 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.6 Меняем конфигурацию GRUB](#s16)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.7 Перезапишем GRUB](#s17)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.8 Выходим и перезагружаем BOX](#s18)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Step 2.](#step2)
+&nbsp;&nbsp;&nbsp;&nbsp;[Step 2.](#step2)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.1 Пересоздаем раздел](#s21)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.2 Создаем файловую систему XFS](#s22)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.3 Переносим данные на созданный 8G раздел](#s23)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.4 Меняем fstab](#s24)
+
 
 ### <a name="zadanie"></a> Задание
 Работа с LVM
@@ -282,7 +287,7 @@ $ sudo cp -dpRxf --preserve=context /var/* /mnt/v_var/
 ### <a name="s15"> S1.5 Вносим изменения в fstab
 Изначальное состояние
 ```bash
-]$ cat /mnt/v_tmp_root/etc/fstab
+$ cat /mnt/v_tmp_root/etc/fstab
 
 #
 # /etc/fstab
@@ -368,6 +373,62 @@ done
 ```bash
 # exit
 exit
-[vagrant@lvm ~]$ sudo reboot
+$ sudo reboot
 ```
 ### <a name="step2"> Step 2.
+### <a name="s21"> S2.1 Пересоздаем раздел
+Удаляем старый раздел **VolGroup00-LogVol00**
+```bash
+$ sudo lvremove /dev/VolGroup00/LogVol00
+Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]: y
+  Logical volume "LogVol00" successfully removed
+```
+Создаем раздел нужного размера **8G**
+```bash
+$ sudo lvcreate -n LogVol00 -L 8G /dev/VolGroup00
+WARNING: xfs signature detected on /dev/VolGroup00/LogVol00 at offset 0. Wipe it? [y/n]: y
+  Wiping xfs signature on /dev/VolGroup00/LogVol00.
+  Logical volume "LogVol00" created.
+```
+### <a name="s22"> S2.2 Создаем файловую систему XFS
+```bash
+$ sudo mkfs.xfs /dev/VolGroup00/LogVol00
+meta-data=/dev/VolGroup00/LogVol00 isize=512    agcount=4, agsize=524288 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=2097152, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+```
+### <a name="s23"> S2.3 Переносим данные на созданный 8G раздел
+Монтируем раздел
+```bash
+$ sudo mount /dev/VolGroup00/LogVol00/ /mnt/
+```
+Копируем данные
+```bash
+$ sudo cp -dpRxf --preserve=context / /mnt/
+```
+### <a name="s24"> S2.4 Меняем fstab
+Изначальное состояние
+```bash
+$ sudo cat /mnt/etc/fstab
+
+#
+# /etc/fstab
+# Created by anaconda on Sat May 12 18:50:26 2018
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+/dev/mapper/vg_tmp_root-lv_tmp_root /                       xfs     defaults        0 0
+UUID=570897ca-e759-4c81-90cf-389da6eee4cc /boot                   xfs     defaults        0 0
+/dev/mapper/VolGroup00-LogVol01 swap                    swap    defaults        0 0
+UUID=2801146a-3b78-4976-bfda-a8c051d52cca /home                   ext4     defaults        0 0
+UUID=4658fba2-6740-41c6-89a3-636e77507abe /var                   ext4     defaults        0 0
+```
+
+
