@@ -14,6 +14,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.6 Меняем конфигурацию GRUB](#s16)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.7 Перезапишем GRUB](#s17)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.8 Выходим и перезагружаем BOX](#s18)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.9 Результат](#s19)
 &nbsp;&nbsp;&nbsp;&nbsp;[Step 2.](#step2)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.1 Пересоздаем раздел](#s21)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.2 Создаем файловую систему XFS](#s22)  
@@ -384,6 +385,8 @@ done
 exit
 $ sudo reboot
 ```
+### <a name="s19"> S1.9 Результат
+Перенесли данные раздела **VolGroup00/LogVol00** на временный раздел **vg_tmp_root/lv_tmp_root**
 ### <a name="step2"> Step 2.
 ### <a name="s21"> S2.1 Пересоздаем раздел
 Удаляем старый раздел **VolGroup00-LogVol00**

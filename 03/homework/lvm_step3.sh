@@ -34,6 +34,10 @@ ls -X /home/vagrant/
 #lvconvert --merge /dev/vg_home/s_shot_lv_home
 #sudo mount -o remount,rw /dev/vg_home/lv_home /home
 #sudo lvs
-echo -e "${WHITE}════════ After Rebooting The PC, Run /vagrant/lvm_step4.sh${NORMAL}"
+echo -e "${WHITE}════════ Recovering Files From Snapshot${NORMAL}"
+#echo "Before"
+#ls -X /home/vagrant/
+#echo "Recovering"
+sudo lvconvert --merge /dev/vg_home/s_shot_lv_home
 echo "Reboot BOX"
 sudo reboot
