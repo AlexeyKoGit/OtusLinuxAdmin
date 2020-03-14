@@ -14,7 +14,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.6 Меняем конфигурацию GRUB](#s16)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.7 Перезапишем GRUB](#s17)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.8 Выходим и перезагружаем BOX](#s18)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.9 Результат](#s19)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.9 Результат](#s19)  
 &nbsp;&nbsp;&nbsp;&nbsp;[Step 2.](#step2)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.1 Пересоздаем раздел](#s21)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.2 Создаем файловую систему XFS](#s22)  
