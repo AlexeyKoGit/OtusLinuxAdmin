@@ -11,9 +11,10 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.3  Создадим файловую систему на полученных разделах](#s13)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.4 Переносим данные на новые LVM разделы](#s14)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.5 Вносим изменения в fstab](#s15)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.6 Меняем конфигурацию grub](#s16)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.7 Создаем новую конфигурацию GRUB](#s17)
-
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.6 Меняем конфигурацию GRUB](#s16)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.7 Перезапишем GRUB](#s17)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.8 Выходим и перезагружаем BOX](#s18)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Step 2.](#step2)
 
 ### <a name="zadanie"></a> Задание
 Работа с LVM
@@ -319,7 +320,7 @@ UUID=570897ca-e759-4c81-90cf-389da6eee4cc /boot                   xfs     defaul
 UUID=2801146a-3b78-4976-bfda-a8c051d52cca /home                   ext4     defaults        0 0
 UUID=4658fba2-6740-41c6-89a3-636e77507abe /var                   ext4     defaults        0 0
 ```
-### <a name="s16"> S1.6 Меняем конфигурацию grub
+### <a name="s16"> S1.6 Меняем конфигурацию GRUB
 Изначальное состояние
 ```bash
 $ cat /mnt/v_tmp_root/etc/default/grub
@@ -342,7 +343,7 @@ GRUB_TERMINAL_OUTPUT="console"
 GRUB_CMDLINE_LINUX="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 elevator=noop crashkernel=auto rd.lvm.lv=vg_tmp_root/lv_tmp_root rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet"
 GRUB_DISABLE_RECOVERY="true"
 ```
-### <a name="s17"> Создаем новую конфигурацию GRUB
+### <a name="s17"> S1.7 Перезапишем GRUB
 Монтируем необходимое окружение
 ````bash
 $ sudo mount --bind /proc /mnt/v_tmp_root/proc
@@ -362,12 +363,11 @@ Found linux image: /boot/vmlinuz-3.10.0-862.2.3.el7.x86_64
 Found initrd image: /boot/initramfs-3.10.0-862.2.3.el7.x86_64.img
 done
 ```
+### <a name="s18"> S1.8 Выходим и перезагружаем BOX
 Выходим из **chroot** и перезагружаем **box**
 ```bash
 # exit
 exit
 [vagrant@lvm ~]$ sudo reboot
 ```
-<code>nano bash</code>.
-This **word** is bold. This <em>word</em> is italic.  
-[Deployment steps](##Задание)
+### <a name="step2"> Step 2.
