@@ -21,6 +21,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.4 Меняем fstab](#s24)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.5 Перезапишем GRUB](#s25)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.6 Выходим и перезагружаем BOX](#s26)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.7 Результат](#s27)  
 &nbsp;&nbsp;&nbsp;&nbsp;[Step 3.](#step3)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.1 Генерируем файлы](#s31)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.2 Создаем snapshot](#s32)  
@@ -489,6 +490,7 @@ GRUB_DISABLE_RECOVERY="true"
 exit
 $ sudo reboot
 ```
+### <a name="s27"> S2.7 Результат
 После перезагрузки можно убедится, что мы фактически уменьшили раздел **VolGroup00/LogVol00** до **8G**
 ```bash
 $ lsblk
