@@ -18,7 +18,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.1 Пересоздаем раздел](#s21)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.2 Создаем файловую систему XFS](#s22)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.3 Переносим данные на созданный 8G раздел](#s23)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.4 Меняем fstab](#s24)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.4 Меняем fstab](#s24)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.5 Перезапишем GRUB](#s25)
 
 
 ### <a name="zadanie"></a> Задание
@@ -430,5 +431,22 @@ UUID=570897ca-e759-4c81-90cf-389da6eee4cc /boot                   xfs     defaul
 UUID=2801146a-3b78-4976-bfda-a8c051d52cca /home                   ext4     defaults        0 0
 UUID=4658fba2-6740-41c6-89a3-636e77507abe /var                   ext4     defaults        0 0
 ```
+Меняем **vg_tmp_root-lv_tmp_root** на **VolGroup00-LogVol00**  
+Получиться должно следующее:
+```bash
+$ sudo cat /mnt/etc/fstab
 
-
+#
+# /etc/fstab
+# Created by anaconda on Sat May 12 18:50:26 2018
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+/dev/mapper/VolGroup00-LogVol00 /                       xfs     defaults        0 0
+UUID=570897ca-e759-4c81-90cf-389da6eee4cc /boot                   xfs     defaults        0 0
+/dev/mapper/VolGroup00-LogVol01 swap                    swap    defaults        0 0
+UUID=2801146a-3b78-4976-bfda-a8c051d52cca /home                   ext4     defaults        0 0
+UUID=4658fba2-6740-41c6-89a3-636e77507abe /var                   ext4     defaults        0 0
+```
+### <a name="s25"> S2.5 Перезапишем GRUB
