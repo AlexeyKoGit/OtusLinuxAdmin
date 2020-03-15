@@ -132,41 +132,57 @@ spl                   102412  4 icp,zfs,zcommon,znvpair
 ### <a name="step2"> Step 2.
 ### <a name="s21"> S2.1 Добавляем диски в ZFS
 Определяем на каких дисках будем создавать файловую систему **ZFS**.
-
-
-
-
-
-
-
-
-
-
-
-### <a name="step2"> Step 2.
-### <a name="s21"> S2.1 Пересоздаем раздел
-Удаляем старый раздел **VolGroup00-LogVol00**
-
-Создаем раздел нужного размера **8G**
 ```bash
-$ sudo lvcreate -n LogVol00 -L 8G /dev/VolGroup00
-WARNING: xfs signature detected on /dev/VolGroup00/LogVol00 at offset 0. Wipe it? [y/n]: y
-  Wiping xfs signature on /dev/VolGroup00/LogVol00.
-  Logical volume "LogVol00" created.
+$ sudo lsblk
+NAME                    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                       8:0    0   40G  0 disk
+├─sda1                    8:1    0    1M  0 part
+├─sda2                    8:2    0    1G  0 part /boot
+└─sda3                    8:3    0   39G  0 part
+  ├─VolGroup00-LogVol00 253:0    0 37.5G  0 lvm  /
+  └─VolGroup00-LogVol01 253:1    0  1.5G  0 lvm  [SWAP]
+sdb                       8:16   0   10G  0 disk
+sdc                       8:32   0    2G  0 disk
+sdd                       8:48   0    1G  0 disk
+sde                       8:64   0    1G  0 disk
 ```
-### <a name="s22"> S2.2 Создаем файловую систему XFS
+**sdb 10G** – основной **ZFS** диск.   
+**sdc 2G** – выделим под **cache**.  
+Создаем **ZFS Pool** на основе диска **sdb**
 ```bash
-$ sudo mkfs.xfs /dev/VolGroup00/LogVol00
-meta-data=/dev/VolGroup00/LogVol00 isize=512    agcount=4, agsize=524288 blks
-         =                       sectsz=512   attr=2, projid32bit=1
-         =                       crc=1        finobt=0, sparse=0
-data     =                       bsize=4096   blocks=2097152, imaxpct=25
-         =                       sunit=0      swidth=0 blks
-naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
-log      =internal log           bsize=4096   blocks=2560, version=2
-         =                       sectsz=512   sunit=0 blks, lazy-count=1
-realtime =none                   extsz=4096   blocks=0, rtextents=0
+$ sudo zpool create tank sdb
+$ zpool list
+NAME   SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
+tank  9.94G   272K  9.94G         -     0%     0%  1.00x  ONLINE  -
 ```
+Добавим в **ZFS pool** диск для **cache**.
+```bash
+$ sudo zpool add -f tank cache sdc
+$ zpool status
+  pool: tank
+ state: ONLINE
+  scan: none requested
+config:
+
+        NAME        STATE     READ WRITE CKSUM
+        tank        ONLINE       0     0     0
+          sdb       ONLINE       0     0     0
+        cache
+          sdc       ONLINE       0     0     0
+
+errors: No known data errors
+
+```
+
+
+
+
+
+
+
+
+
+
 ### <a name="s23"> S2.3 Переносим данные на созданный 8G раздел
 Монтируем раздел
 ```bash

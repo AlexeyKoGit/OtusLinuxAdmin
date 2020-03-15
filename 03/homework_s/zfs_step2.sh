@@ -8,3 +8,6 @@ NORMAL='\033[0m'
 #start
 label="${WHITE}║        ZFS STEP 2           ║${NORMAL}"
 echo -e "${WHITE}╔═════════════════════════════╗${NORMAL}\n${WHITE}$label${NORMAL}\n${WHITE}╚═════════════════════════════╝${NORMAL}"
+sudo lsblk
+echo -e "${WHITE}════════ Creating ZFS pool${NORMAL}"
+sudo zpool create tank 
