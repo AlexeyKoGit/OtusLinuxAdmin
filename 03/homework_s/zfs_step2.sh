@@ -10,4 +10,7 @@ label="${WHITE}║        ZFS STEP 2           ║${NORMAL}"
 echo -e "${WHITE}╔═════════════════════════════╗${NORMAL}\n${WHITE}$label${NORMAL}\n${WHITE}╚═════════════════════════════╝${NORMAL}"
 sudo lsblk
 echo -e "${WHITE}════════ Creating ZFS pool${NORMAL}"
-sudo zpool create tank 
+echo -e "create ZFS pool 'tank' (sdb)"
+sudo zpool create tank sdb
+echo -e "create ZFS cache (sdc)"
+sudo zpool add -f tank cache sdc
