@@ -26,4 +26,4 @@ sudo yum -y install zfs | grep -Poz '((?s)([=]{80}).+[=]{80}.(?-s)Install.+$)|(^
 echo -e "${WHITE}════════ Modules Test${NORMAL}"
 sudo modprobe zfs
 sudo lsmod | grep 'zfs'
-echo -e "\nplease run next sh file zfs_step2.sh"
+echo -e "\n${WHITE}please run next sh file zfs_step2.sh${NORMAL}"
