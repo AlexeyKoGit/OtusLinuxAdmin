@@ -17,5 +17,5 @@
 \- восстановится со снэпшота  
 \- залоггировать работу можно с помощью утилиты script  
 
-["*"](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/03/homework_s "2.  Задание со (*)") на нашей куче дисков попробовать поставить btrfs/zfs - с кешем, снэпшотами - разметить здесь каталог /opt
+["*"](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/03/homework_s "Задание со (*)") на нашей куче дисков попробовать поставить btrfs/zfs - с кешем, снэпшотами - разметить здесь каталог /opt
 
