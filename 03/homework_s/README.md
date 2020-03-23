@@ -321,4 +321,6 @@ total 15
 **Vagrantfile** с дисками.  
 Bash сценарий **zfs_step1.sh**, установка **ZFS** (Установка занимает много времени, компилируются модули **ZFS**).  
 Bash сценарий **zfs_step2.sh**, создаёт файловую систему **ZFS**.  
-Bash сценарий **zfs_step3.sh**, восстанавливаем файлы из **snapshot**.
+Bash сценарий **zfs_step3.sh**, восстанавливаем файлы из **snapshot**.  
+  
+**Файлы для тестирования** , ссылка на [GIT](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/03/homework_s)
