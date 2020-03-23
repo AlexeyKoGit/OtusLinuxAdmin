@@ -243,7 +243,37 @@ total 15
 -rw-r--r--. 1 root root 4 Mar 17 19:45 9.txt
 ```
 ### <a name="s32"> S3.2 Snapshot, создаем и восстанавливаемся
+Создадим **snapshot**
+```bash
+$ sudo zfs snapshot -r tank/opt_@snp_1
+```
+Проверяем что получилось
+```bash
+$ zfs list -t snapshot
+NAME              USED  AVAIL  REFER  MOUNTPOINT
+tank/opt_@snp_1     0B      -    47K  -
+```
+Удаляем часть файлов
+```bash
+$ for (( i=5; i <= 10; i++ )); do sudo rm /opt/$i.txt; done
+```
+Результат
+```bash
+$ ll
+total 9
+-rw-r--r--. 1 root root 6 Mar 17 19:50 11.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 12.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 13.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 14.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 15.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 1.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 2.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 3.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 4.txt
+```
+snapshot можно смонтировать
+```bash
 
-
+```
 ***
 ### <a name="s27"> S Результат 
