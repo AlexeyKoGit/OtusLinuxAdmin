@@ -28,8 +28,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.2 Создаем snapshot](#s32)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.3 Восстанавливаем данные из snapshot-а](#s33)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.4 перезагружаем BOX](#s34)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.5 Результат](#s35)
-
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.5 Результат](#s35)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Step 4 Практическая проверка задания](#step4)
 
 ### <a name="zadanie"></a> Задание
 Работа с LVM
@@ -615,3 +615,11 @@ total 60
 -rw-rw-r--. 1 vagrant vagrant  6 Mar 14 17:31 9.txt
 ```
 Как видим файлы восстановились.
+### <a name="step4"> Step 4 Практическая проверка задания
+Для возможности практической проверки задания подготовлены файлы:  
+**Vagrantfile** с дисками.  
+Bash сценарий **lvm_step1.sh**, перенос файлов на временный раздел **VLM XFS**.  
+Bash сценарий **lvm_step2.sh**, возвращаем файлы на вновь созданный **8G** раздел **VLM XFS**.  
+Bash сценарий **lvm_step3.sh**, восстанавливаем файлы из **snapshot**.  
+  
+**Файлы для тестирования** , ссылка на [GIT](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/03/homework)
