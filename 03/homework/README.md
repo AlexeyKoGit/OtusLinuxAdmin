@@ -620,6 +620,6 @@ total 60
 **Vagrantfile** с дисками.  
 Bash сценарий **lvm_step1.sh**, перенос файлов на временный раздел **VLM XFS**.  
 Bash сценарий **lvm_step2.sh**, возвращаем файлы на вновь созданный **8G** раздел **VLM XFS**.  
-Bash сценарий **lvm_step3.sh**, восстанавливаем файлы из **snapshot**.  
+Bash сценарий **lvm_step3.sh**, восстанавливаем файлы из **snapshot** (Для вступления изменений в силу необходимо перезагрузить **box**).  
   
 **Файлы для тестирования** , ссылка на [GIT](https://github.com/AlexeyKoGit/OtusLinuxAdmin/tree/master/03/homework)
