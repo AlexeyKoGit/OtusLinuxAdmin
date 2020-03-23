@@ -5,17 +5,19 @@
 [Порядок выполнения задания](#pvz)  
 1\. [Устанавливаем необходимое ПО](#unpo)  
 2\. [Шаги выполнения задания](#steps)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Step 1. Установим ZFS](#step1)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Step 1 Установим ZFS](#step1)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.1 ПО для ZFS](#s11)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S1.2 Результат](#s12)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Step 2. Создаем файловую систему](#step2)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Step 2 Создаем файловую систему](#step2)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.1 Добавляем диски в ZFS](#s21)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.2 Размещаем каталог /opt на ZFS разделе](#s22)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.3 Результат](#s23)  
 &nbsp;&nbsp;&nbsp;&nbsp;[Step 3 Проверим работу snapshot.](#step3)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.1 Генерируем файлы](#s31)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.2 Snapshot, создаем и восстанавливаемся](#s32)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.3 Результат](#s33)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.3 Результат](#s33)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Step 4 Практическая проверка задания](#step4)
+
 ### <a name="zadanie"></a> Задание (*)
 \* на нашей куче дисков попробовать поставить btrfs/zfs - с кешем, снэпшотами - разметить здесь каталог /opt
 ### <a name="inv"></a> Инвентарь
@@ -40,7 +42,7 @@ URLs:
 
 ### 2. <a name="steps"> Шаги выполнения задания 
 Разобьём выполнение задания на логические этапы – шаги (**steps**)
-### <a name="step1"> Step 1. Установим ZFS
+### <a name="step1"> Step 1 Установим ZFS
 ### <a name="s11"> S1.1 ПО для ZFS
 Установим репозиторий с **ZFS**
 ```bash
@@ -120,7 +122,7 @@ spl                   102412  4 icp,zfs,zcommon,znvpair
 ```
 ### <a name="s12"> S1.2 Результат
 **ZFS** успешно установлен и модули успешно загружаются.
-### <a name="step2"> Step 2. Создаем файловую систему.
+### <a name="step2"> Step 2 Создаем файловую систему
 ### <a name="s21"> S2.1 Добавляем диски в ZFS
 Определяем на каких дисках будем создавать файловую систему **ZFS**.
 ```bash
@@ -209,7 +211,7 @@ tank/opt_ on /opt type zfs (rw,seclabel,xattr,noacl)
 На базе диска **dsb** создан "**pool**" tank.  
 Создана файловая система "**opt_**", смонтирована в каталог **/opt**.  
 Диск **sdc** используется в качестве кэша.  
-### <a name="step3"> Step 3 Проверим работу snapshot.
+### <a name="step3"> Step 3 Проверим работу snapshot
 ### <a name="s31"> S3.1 Генерируем файлы
 Создадим файлы в каталоге **/opt**
 ```bash
@@ -313,4 +315,10 @@ total 15
 -rw-r--r--. 1 root root 4 Mar 17 19:50 9.txt
 ```
 ### <a name="s33"> S3.3 Результат 
-Проверили работу **snapshot**. Сгенерировали файлы, удалили часть и восстановились с созданного **snapshot**.
+Проверили работу **snapshot**. Сгенерировали файлы, удалили часть и восстановились из созданного **snapshot**.
+### <a name="step4"> Step 4 Практическая проверка задания
+Для возможности практической проверки задания подготовлены файлы:  
+**Vagrantfile** с дисками.  
+Bash сценарий **zfs_step1.sh**, установка **ZFS**.  
+Bash сценарий **zfs_step2.sh**, создаёт файловую систему **ZFS**.
+
