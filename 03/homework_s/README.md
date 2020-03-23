@@ -14,14 +14,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S2.3 Результат](#s23)  
 &nbsp;&nbsp;&nbsp;&nbsp;[Step 3 Проверим работу snapshot.](#step3)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.1 Генерируем файлы](#s31)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.2 Snapshot, создаем и восстанавливаемся](#s32)
-
-
-***  
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.5 Результат](#s35)
-
-
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.2 Snapshot, создаем и восстанавливаемся](#s32)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[S3.3 Результат](#s33)
 ### <a name="zadanie"></a> Задание (*)
 \* на нашей куче дисков попробовать поставить btrfs/zfs - с кешем, снэпшотами - разметить здесь каталог /opt
 ### <a name="inv"></a> Инвентарь
@@ -271,9 +265,52 @@ total 9
 -rw-r--r--. 1 root root 6 Mar 17 19:50 3.txt
 -rw-r--r--. 1 root root 6 Mar 17 19:50 4.txt
 ```
-snapshot можно смонтировать
+Полученный **snapshot** при необходимости можно смонтировать
 ```bash
-
+$ sudo mount -t zfs tank/opt_@snp_1 /mnt
 ```
-***
-### <a name="s27"> S Результат 
+```bash
+$ ll /mnt/
+total 15
+-rw-r--r--. 1 root root 5 Mar 17 19:50 10.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 11.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 12.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 13.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 14.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 15.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 1.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 2.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 3.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 4.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 5.txt
+-rw-r--r--. 1 root root 5 Mar 17 19:50 6.txt
+-rw-r--r--. 1 root root 5 Mar 17 19:50 7.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 8.txt
+-rw-r--r--. 1 root root 4 Mar 17 19:50 9.txt
+```
+Восстанавливаем данные с **snapshot**
+```bash
+$ sudo zfs rollback tank/opt_@snp_1
+```
+Проверяем
+```bash
+$ ll /opt/
+total 15
+-rw-r--r--. 1 root root 5 Mar 17 19:50 10.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 11.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 12.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 13.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 14.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 15.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 1.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 2.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 3.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 4.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 5.txt
+-rw-r--r--. 1 root root 5 Mar 17 19:50 6.txt
+-rw-r--r--. 1 root root 5 Mar 17 19:50 7.txt
+-rw-r--r--. 1 root root 6 Mar 17 19:50 8.txt
+-rw-r--r--. 1 root root 4 Mar 17 19:50 9.txt
+```
+### <a name="s33"> S3.3 Результат 
+Проверили работу **snapshot**. Сгенерировали файлы, удалили часть и восстановились с созданного **snapshot**.
